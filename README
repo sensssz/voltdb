@@ -5,6 +5,8 @@ GNU Affero General Public License Version 3. See the accompanying
 LICENSE file for details on your rights and responsibilities with 
 regards to the use and redistribution of VoltDB software.
 
+
+
 What is VoltDB?
 ====================
 VoltDB is a horizontally-scalable, in-memory SQL RDBMS designed for 
