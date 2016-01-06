@@ -36,8 +36,6 @@ class DatabaseReplicationModule extends Module {
         editPopupSave       { $("#btnSaveReplication") }
         delete              { $("#btnDeleteConnection") }
 
-
-
         enabledCheckbox     { $("#frmDatabaseReplication > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > span:nth-child(1) > div > ins") }
 
         idField             { $("#txtDrId") }
@@ -51,5 +49,11 @@ class DatabaseReplicationModule extends Module {
 
         type                (required: false) { $("#lblDrType") }
         id                  (required: false) { $("#lblDrId") }
+
+        databaseSelect      { $("#tdDbSelect") }
+        secondDatabase      { $("#tdDbSelect > option:nth-child(2)") }
+
+        firstServer         { $("#ulDrServerList > li > label > input") }
     }
+
 }

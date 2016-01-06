@@ -56,23 +56,22 @@ class DeploymentUser(unittest.TestCase):
 
 
 class UpdateDeploymentUser(DeploymentUser):
-
     def test_validate_duplicate_username(self):
         """Validate duplicate username"""
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         db_data = {"name": "test", "password": "voltdb", "plaintext": True, "roles": "Administrator", "databaseid": 1}
         response = requests.put(__url__, json=db_data, headers=headers)
         value = response.json()
-        self.assertEqual(value['success'],False)
+        self.assertEqual(value['success'], False)
         self.assertEqual(response.status_code, 404)
 
     def test_validate_username_empty(self):
         """ensure username value is not empty"""
 
-        db_data = {"password": "voltdb","plaintext": True, "roles": "Administrator", "databaseid": 1}
+        db_data = {"password": "voltdb", "plaintext": True, "roles": "Administrator", "databaseid": 1}
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         response = requests.put(__url__,
-                                json= db_data, headers = headers)
+                                json=db_data, headers=headers)
         value = response.json()
         self.assertEqual(value['errors'][0], "'name' is a required property")
         self.assertEqual(response.status_code, 200)
@@ -80,10 +79,10 @@ class UpdateDeploymentUser(DeploymentUser):
     def test_validate_password_empty(self):
         """ensure password value is not empty"""
 
-        db_data = {"name": "voltdb","plaintext": True, "roles": "Administrator", "databaseid": 1}
+        db_data = {"name": "voltdb", "plaintext": True, "roles": "Administrator", "databaseid": 1}
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         response = requests.put(__url__,
-                                json= db_data, headers = headers)
+                                json=db_data, headers=headers)
         value = response.json()
         self.assertEqual(value['errors'][0], "'password' is a required property")
         self.assertEqual(response.status_code, 200)
@@ -91,10 +90,10 @@ class UpdateDeploymentUser(DeploymentUser):
     def test_validate_roles_empty(self):
         """ensure roles value is not empty"""
 
-        db_data = {"name": "voltdb","password":"test","plaintext": True, "databaseid": 1}
+        db_data = {"name": "voltdb", "password": "test", "plaintext": True, "databaseid": 1}
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         response = requests.put(__url__,
-                                json= db_data, headers = headers)
+                                json=db_data, headers=headers)
         value = response.json()
         self.assertEqual(value['errors'][0], "'roles' is a required property")
         self.assertEqual(response.status_code, 200)
@@ -102,10 +101,10 @@ class UpdateDeploymentUser(DeploymentUser):
     def test_validate_invalid_roles(self):
         """ensure roles value is not invalid"""
 
-        db_data = {"name":"test","password":"voltdb","plaintext":True,"roles":"Adminis","databaseid":1}
+        db_data = {"name": "test", "password": "voltdb", "plaintext": True, "roles": "Adminis", "databaseid": 1}
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         response = requests.put(__url__,
-                                json= db_data, headers = headers)
+                                json=db_data, headers=headers)
         value = response.json()
         self.assertEqual(value['errors'][0], "u'Adminis' is not one of ['Administrator', 'User']")
         self.assertEqual(response.status_code, 200)
@@ -113,10 +112,10 @@ class UpdateDeploymentUser(DeploymentUser):
     def test_update_deployment_user(self):
         """ensure deployment user is updated"""
 
-        db_data = {"name":"test", "password": "admin", "plaintext": True, "roles": "Administrator", "databaseid": 1}
+        db_data = {"name": "test", "password": "admin", "plaintext": True, "roles": "Administrator", "databaseid": 1}
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         response = requests.post(__url__,
-                                json= db_data, headers = headers)
+                                 json=db_data, headers=headers)
         value = response.json()
         self.assertEqual(value['statusstring'], "User Updated")
         self.assertEqual(response.status_code, 200)

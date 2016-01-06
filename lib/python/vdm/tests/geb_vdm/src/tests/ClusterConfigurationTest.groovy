@@ -83,6 +83,16 @@ class ClusterConfigurationTest extends TestBase {
     String edit_DatabaseTest_File   = "src/resources/edit_DatabaseTest.csv"
     String cvsSplitBy = ","
 
+    BufferedReader br = null
+    String line = ""
+    String[] extractedValue = ["random_input", "random_input"]
+    String newValueDatabase = 0
+    boolean foundStatus = false
+
+    int indexOfNewDatabase = 0
+    int indexOfLocal = 1
+    int nextCount =0
+    String new_string = ""
 
     def setup() { // called before each test
         count = 0
@@ -127,21 +137,19 @@ class ClusterConfigurationTest extends TestBase {
                 println("Stale Element Exception - Retrying")
             }
         }
-        and: 'Provide the value in field'
-        // The value is provided twice to avoid reinserting the same value
-        overview.sitePerHostField.value("9")
-        overview.sitePerHostText.click()
-        overview.sitePerHostField.value("6")
-        overview.sitePerHostText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
+        and: 'Create new database that returns'
+        indexOfNewDatabase = createNewDatabase(create_DatabaseTest_File)
+        then: 'Choose the new database'
+        println(indexOfNewDatabase)
+        chooseDatabase(indexOfNewDatabase, "name_src")
 
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.sitePerHostField.value() == "6") {
+        when: 'Provide Value for Site Per Host'
+        overview.sitePerHostField.value("1")
+        overview.sitePerHostText.click()
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Site Per Host has changed'
+        if(overview.sitePerHostField.value() == "1") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -149,25 +157,16 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.sitePerHostField.value(oldVariable)
-        overview.sitePerHostText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
+        when: 'Choose the database with index 1'
+        openDatabase()
+        chooseDatabase(indexOfLocal, "local")
+        then: ''
+        println()
 
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.sitePerHostField.value() == oldVariable) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
+        when: 'Click delete for the required database'
+        openDatabase()
+        then: 'Delete the database'
+        deleteNewDatabase(indexOfNewDatabase, "name_src")
         println()
     }
 
@@ -198,45 +197,37 @@ class ClusterConfigurationTest extends TestBase {
                 println("Stale Element Exception - Retrying")
             }
         }
-        and: 'Provide the value in field'
-        // The value is provided twice to avoid reinserting the same value
-        overview.ksafetyField.value("1")
-        overview.ksafetyField.value("2")
-        overview.ksafetyText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
+        and: 'Create new database that returns'
+        indexOfNewDatabase = createNewDatabase(create_DatabaseTest_File)
+        then: 'Choose the new database'
+        println(indexOfNewDatabase)
+        chooseDatabase(indexOfNewDatabase, "name_src")
 
+        when: 'Provide Value for Site Per Host'
+        overview.ksafetyField.value("1")
+        overview.ksafetyText.click()
+        report "new"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Site Per Host has changed'
+        if(overview.ksafetyField.value() == "1") {
+            println("Test Pass: The change is displayed")
         }
         else {
             println("Test Fail: The change isn't displayed")
             assert false
         }
-        then: 'Verify the value in field'
-        if(overview.ksafetyField.value() == "2") {
-            println("Test Pass: The change is displayed")
-        }
-        else {
-            println("Test Fail: The change is't displayed")
-            assert false
-        }
-        when: 'Restore old value'
-        overview.ksafetyField.value(oldVariable)
-        overview.sitePerHostText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
 
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.ksafetyField.value() == oldVariable) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
+        when: 'Choose the database with index 1'
+        openDatabase()
+        chooseDatabase(indexOfLocal, "local")
+        then: ''
+        println()
+
+        when: 'Click delete for the required database'
+        openDatabase()
+        then: 'Delete the database'
+        deleteNewDatabase(indexOfNewDatabase, "name_src")
         println()
     }
 
@@ -347,132 +338,127 @@ class ClusterConfigurationTest extends TestBase {
     }
 
     def verifySecurity() {
-        println("Test: verifySecurity")
-        String initialStatus = overview.securityStatus.text()
-        println("Initially " + initialStatus)
+        boolean result = overview.CheckIfSecurityChkExist()
+        if(result) {
+            println("Test: verifySecurity")
+            String initialStatus = overview.securityStatus.text()
+            println("Initially " + initialStatus)
 
-        when: 'Verify if text and field are displayed'
-        for(count=0; count<numberOfTrials; count++) {
-            try {
-                if(overview.securityText.text() == security) {
-                    println("Test Pass: The text and field are displayed")
-                    break
+            when: 'Verify if text and field are displayed'
+            for (count = 0; count < numberOfTrials; count++) {
+                try {
+                    if (overview.securityText.text() == security) {
+                        println("Test Pass: The text and field are displayed")
+                        break
+                    } else if (overview.securityText.text() != security) {
+                        println("Test Fail: The text is not displayed")
+                        assert false
+                    } else {
+                        println("Test Fail: Unknown error")
+                        assert false
+                    }
+                } catch (org.openqa.selenium.StaleElementReferenceException e) {
+                    println("Stale Element Exception - Retrying")
                 }
-                else if(overview.securityText.text() != security) {
-                    println("Test Fail: The text is not displayed")
-                    assert false
-                }
-                else {
-                    println("Test Fail: Unknown error")
-                    assert false
-                }
-            } catch(org.openqa.selenium.StaleElementReferenceException e) {
-                println("Stale Element Exception - Retrying")
             }
-        }
-        overview.securityCheckbox.isDisplayed()
-        then: 'Verify Elements of Security are displayed'
-        overview.securityText.click()
-        for(count=0; count<numberOfTrials; count++) {
-            try {
-                if(overview.usernameTitleText.text() == username && overview.roleTitleText.text() == role ) {
-                    println("Test Pass: The contents are present")
-                    break
+            overview.securityCheckbox.isDisplayed()
+            then: 'Verify Elements of Security are displayed'
+
+            overview.securityText.click()
+            for (count = 0; count < numberOfTrials; count++) {
+                try {
+                    if (overview.usernameTitleText.text() == username && overview.roleTitleText.text() == role) {
+                        println("Test Pass: The contents are present")
+                        break
+                    } else if (overview.usernameTitleText.text() != username) {
+                        println("Test Fail: The Username has error")
+                        assert false
+                    } else if (overview.roleTitleText.text() != role) {
+                        println("Test Fail: The Role has error")
+                        assert false
+                    } else {
+                        println("Test Fail: Unknown Error")
+                        assert false
+                    }
+                } catch (org.openqa.selenium.StaleElementReferenceException e) {
+                    println("Stale Element Exception - Retrying")
                 }
-                else if(overview.usernameTitleText.text() != username) {
-                    println("Test Fail: The Username has error")
-                    assert false
-                }
-                else if(overview.roleTitleText.text() != role) {
-                    println("Test Fail: The Role has error")
-                    assert false
-                }
-                else {
-                    println("Test Fail: Unknown Error")
-                    assert false
-                }
-            } catch(org.openqa.selenium.StaleElementReferenceException e) {
-                println("Stale Element Exception - Retrying")
             }
-        }
 
-        // Change the checkbox status
-        when: 'Click the Checkbox'
-        statusOfTest = false
-        for(count=0; count<numberOfTrials; count++) {
-            try {
-                overview.securityCheckbox.click()
-                overview.securityText.click()
+            // Change the checkbox status
+            when: 'Click the Checkbox'
+            statusOfTest = false
+            for (count = 0; count < numberOfTrials; count++) {
+                try {
+                    overview.securityCheckbox.click()
+                    overview.securityText.click()
 
-                if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
+                    if (waitFor(60) { saveStatus.text().equals(saveMessage) }) {
 
-                }
-                else {
-                    println("Test Fail: The required text is not displayed")
-                    assert false
-                }
+                    } else {
+                        println("Test Fail: The required text is not displayed")
+                        assert false
+                    }
 
-                if(overview.securityStatus.text().equals(initialStatus)) {
-                    println("The status hasn't changed")
+                    if (overview.securityStatus.text().equals(initialStatus)) {
+                        println("The status hasn't changed")
+                    } else if (!overview.securityStatus.text().equals(initialStatus)) {
+                        statusOfTest = true
+                        break
+                    } else {
+                        println("Unknown error")
+                    }
+                } catch (geb.waiting.WaitTimeoutException exception) {
+                    println("Waiting error - Retrying")
                 }
-                else if(!overview.securityStatus.text().equals(initialStatus)) {
-                    statusOfTest = true
-                    break
-                }
-                else {
-                    println("Unknown error")
-                }
-            } catch(geb.waiting.WaitTimeoutException exception) {
-                println("Waiting error - Retrying")
             }
-        }
-        then: 'Check the status of test'
-        if(statusOfTest == true) {
-            println("Test Pass: The change is displayed")
+            then: 'Check the status of test'
+            if (statusOfTest == true) {
+                println("Test Pass: The change is displayed")
+            } else {
+                println("Test Fail: The change isn't displayed")
+                assert false
+            }
+
+            // Restore the checkbox status
+            when: 'Click the Checkbox'
+            statusOfTest = false
+            for (count = 0; count < numberOfTrials; count++) {
+                try {
+                    overview.securityCheckbox.click()
+                    overview.securityText.click()
+                    if (waitFor(60) { saveStatus.text().equals(saveMessage) }) {
+
+                    } else {
+                        println("Test Fail: The required text is not displayed")
+                        assert false
+                    }
+
+                    if (overview.securityStatus.text().equals(initialStatus)) {
+                        statusOfTest = true
+                        break
+                    } else if (!overview.securityStatus.text().equals(initialStatus)) {
+                        println("The status hasn't restored")
+                    } else {
+                        println("Unknown error")
+                    }
+                } catch (geb.waiting.WaitTimeoutException exception) {
+                    println("Waiting error - Retrying")
+                }
+            }
+            then: 'Check the status of test'
+            if (statusOfTest == true) {
+                println("Test Pass: The restore is displayed")
+            } else {
+                println("Test Fail: The restore isn't displayed")
+                assert false
+            }
+            println()
         }
         else {
-            println("Test Fail: The change isn't displayed")
-            assert false
-        }
+            println("Security is not enabled.")
 
-        // Restore the checkbox status
-        when: 'Click the Checkbox'
-        statusOfTest = false
-        for(count=0; count<numberOfTrials; count++) {
-            try {
-                overview.securityCheckbox.click()
-                overview.securityText.click()
-                if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-                }
-                else {
-                    println("Test Fail: The required text is not displayed")
-                    assert false
-                }
-
-                if(overview.securityStatus.text().equals(initialStatus)) {
-                    statusOfTest = true
-                    break
-                }
-                else if(!overview.securityStatus.text().equals(initialStatus)) {
-                    println("The status hasn't restored")
-                }
-                else {
-                    println("Unknown error")
-                }
-            } catch(geb.waiting.WaitTimeoutException exception) {
-                println("Waiting error - Retrying")
-            }
         }
-        then: 'Check the status of test'
-        if(statusOfTest == true) {
-            println("Test Pass: The restore is displayed")
-        }
-        else {
-            println("Test Fail: The restore isn't displayed")
-            assert false
-        }
-        println()
     }
 
     def verifyHttpAccess() {
@@ -669,20 +655,20 @@ class ClusterConfigurationTest extends TestBase {
             }
         }
 
-        when: 'Provide the value in field'
-        overview.filePrefixField.value("AUTO_SNAPS")
-        overview.filePrefixText.click()
-        overview.filePrefixField.value("_AUTO_SNAPS")
-        overview.filePrefixText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
+        when: 'Create new database that returns'
+        indexOfNewDatabase = createNewDatabase(create_DatabaseTest_File)
+        then: 'Choose the new database'
+        println(indexOfNewDatabase)
+        chooseDatabase(indexOfNewDatabase, "name_src")
 
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.filePrefixField.value() == "_AUTO_SNAPS") {
+        when: 'Provide Value for Site Per Host'
+        overview.filePrefixField.value("At_Least")
+        overview.filePrefixText.click()
+        report "hello"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Site Per Host has changed'
+        if(overview.filePrefixField.value() == "At_Least") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -690,81 +676,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.filePrefixField.value(oldVariableFilePrefix)
-        overview.filePrefixText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.filePrefixField.value() == oldVariableFilePrefix) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.frequencyField.value("")
-        overview.filePrefixText.click()
-        overview.frequencyField.value("1")
-        overview.filePrefixText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.frequencyField.value() == "1") {
-            println("Test Pass: The change is displayed")
-        }
-        else {
-            println("Test Fail: The change isn't displayed")
-            assert false
-        }
-
-        when: 'Restore old value'
-        overview.frequencyField.value(oldVariableFrequency)
+        when: 'Provide Value for Frequency in Auto Snapshot'
+        overview.frequencyField.value("10")
         overview.frequencyText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.frequencyField.value() == oldVariableFrequency) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.retainedField.value("")
-        overview.retainedText.click()
-        overview.retainedField.value("100")
-        overview.retainedText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.retainedField.value() == "100") {
+        report "hello1"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Site Per Host has changed'
+        if(overview.frequencyField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -772,58 +691,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.retainedField.value(oldVariableRetained)
+        when: 'Provide Value for Retained in Auto Snapshot'
+        overview.retainedField.value("10")
         overview.retainedText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.retainedField.value() == oldVariableRetained) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
-
-        // Change the checkbox status
-        when: 'Click the Checkbox'
-        statusOfTest = false
-        for(count=0; count<numberOfTrials; count++) {
-            try {
-                overview.autoSnapshotsCheckbox.click()
-                overview.autoSnapshotsText.click()
-
-                if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-                }
-                else {
-                    println("Test Fail: The required text is not displayed")
-                    assert false
-                }
-
-                if(overview.autoSnapshotsStatus.text().equals(initialStatus)) {
-                    println("The status hasn't changed")
-                }
-                else if(!overview.autoSnapshotsStatus.text().equals(initialStatus)) {
-                    statusOfTest = true
-                    break
-                }
-                else {
-                    println("Unknown error")
-                }
-            } catch(geb.waiting.WaitTimeoutException exception) {
-                println("Waiting error - Retrying")
-            }
-        }
-        then: 'Check the status of test'
-        if(statusOfTest == true) {
+        report "hello2"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Site Per Host has changed'
+        if(overview.retainedField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -831,43 +706,13 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        // Restore the checkbox status
-        when: 'Click the Checkbox'
-        statusOfTest = false
-        for(count=0; count<numberOfTrials; count++) {
-            try {
-                overview.autoSnapshotsCheckbox.click()
-                overview.autoSnapshotsText.click()
-                if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-                }
-                else {
-                    println("Test Fail: The required text is not displayed")
-                    assert false
-                }
-
-                if(overview.autoSnapshotsStatus.text().equals(initialStatus)) {
-                    statusOfTest = true
-                    break
-                }
-                else if(!overview.autoSnapshotsStatus.text().equals(initialStatus)) {
-                    println("The status hasn't restored")
-                }
-                else {
-                    println("Unknown error")
-                }
-            } catch(geb.waiting.WaitTimeoutException exception) {
-                println("Waiting error - Retrying")
-            }
-        }
-        then: 'Check the status of test'
-        if(statusOfTest == true) {
-            println("Test Pass: The restore is displayed")
-        }
-        else {
-            println("Test Fail: The restore isn't displayed")
-            assert false
-        }
+        when: 'Choose the database with index 1'
+        openDatabase()
+        chooseDatabase(indexOfLocal, "local")
+        and: 'Click delete for the required database'
+        openDatabase()
+        then: 'Delete the database'
+        deleteNewDatabase(indexOfNewDatabase, "10")
         println()
     }
 
@@ -945,20 +790,20 @@ class ClusterConfigurationTest extends TestBase {
             }
         }
 
-        when: 'Provide the value in field'
-        overview.logFrequencyTimeField.value("")
+        when: 'Create new database that returns'
+        indexOfNewDatabase = createNewDatabase(create_DatabaseTest_File)
+        then: 'Choose the new database'
+        println(indexOfNewDatabase)
+        chooseDatabase(indexOfNewDatabase, "name_src")
+
+        when: 'Provide Value for Log Frequency Time in Command Logging'
+        overview.logFrequencyTimeField.value("10")
         overview.logFrequencyTimeText.click()
-        overview.logFrequencyTimeField.value("500")
-        overview.logFrequencyTimeText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.logFrequencyTimeField.value() == "500") {
+        report "hello"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Log Frequency Time in Command Logging has changed'
+        if(overview.logFrequencyTimeField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -966,40 +811,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.logFrequencyTimeField.value(oldVariableLogFrequencyTime)
-        overview.logFrequencyTimeText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.logFrequencyTimeField.value() == oldVariableLogFrequencyTime) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.logFrequencyTransactionsField.value("1000")
+        when: 'Provide Value for Frequency in Auto Snapshot'
+        overview.logFrequencyTransactionsField.value("10")
         overview.logFrequencyTransactionsText.click()
-        overview.logFrequencyTransactionsField.value("500")
-        overview.logFrequencyTransactionsText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.logFrequencyTransactionsField.value() == "500") {
+        report "hello1"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Site Per Host has changed'
+        if(overview.logFrequencyTransactionsField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -1007,40 +826,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.logFrequencyTransactionsField.value(oldVariableLogFrequencyTransactions)
-        overview.logFrequencyTransactionsText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.logFrequencyTransactionsField.value() == oldVariableLogFrequencyTransactions) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.logSegmentSizeField.value("")
+        when: 'Provide Value for Log Segment Size in Auto Snapshot'
+        overview.logSegmentSizeField.value("10")
         overview.logSegmentSizeText.click()
-        overview.logSegmentSizeField.value("500")
-        overview.logSegmentSizeText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.logSegmentSizeField.value() == "500") {
+        report "hello2"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Log Segment Size has changed'
+        if(overview.logSegmentSizeField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -1048,102 +841,13 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.logSegmentSizeField.value(oldVariableLogSegmentSize)
-        overview.logSegmentSizeText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.logSegmentSizeField.value() == oldVariableLogSegmentSize) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
-
-        // Change the checkbox status
-        when: 'Click the Checkbox'
-        statusOfTest = false
-        for(count=0; count<numberOfTrials; count++) {
-            try {
-                overview.commandLoggingCheckbox.click()
-                overview.commandLoggingText.click()
-
-                if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-                }
-                else {
-                    println("Test Fail: The required text is not displayed")
-                    assert false
-                }
-
-                if(overview.commandLoggingStatus.text().equals(initialStatus)) {
-                    println("The status hasn't changed")
-                }
-                else if(!overview.commandLoggingStatus.text().equals(initialStatus)) {
-                    statusOfTest = true
-                    break
-                }
-                else {
-                    println("Unknown error")
-                }
-            } catch(geb.waiting.WaitTimeoutException exception) {
-                println("Waiting error - Retrying")
-            }
-        }
-        then: 'Check the status of test'
-        if(statusOfTest == true) {
-            println("Test Pass: The change is displayed")
-        }
-        else {
-            println("Test Fail: The change isn't displayed")
-            assert false
-        }
-
-        // Restore the checkbox status
-        when: 'Click the Checkbox'
-        statusOfTest = false
-        for(count=0; count<numberOfTrials; count++) {
-            try {
-                overview.commandLoggingCheckbox.click()
-                overview.commandLoggingText.click()
-                if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-                }
-                else {
-                    println("Test Fail: The required text is not displayed")
-                    assert false
-                }
-
-                if(overview.commandLoggingStatus.text().equals(initialStatus)) {
-                    statusOfTest = true
-                    break
-                }
-                else if(!overview.commandLoggingStatus.text().equals(initialStatus)) {
-                    println("The status hasn't restored")
-                }
-                else {
-                    println("Unknown error")
-                }
-            } catch(geb.waiting.WaitTimeoutException exception) {
-                println("Waiting error - Retrying")
-            }
-        }
-        then: 'Check the status of test'
-        if(statusOfTest == true) {
-            println("Test Pass: The restore is displayed")
-        }
-        else {
-            println("Test Fail: The restore isn't displayed")
-            assert false
-        }
+        when: 'Choose the database with index 1'
+        openDatabase()
+        chooseDatabase(indexOfLocal, "local")
+        and: 'Click delete for the required database'
+        openDatabase()
+        then: 'Delete the database'
+        deleteNewDatabase(indexOfNewDatabase, "10")
         println()
     }
 
@@ -1321,20 +1025,20 @@ class ClusterConfigurationTest extends TestBase {
             }
         }
 
-        when: 'Provide the value in field'
-        overview.maxJavaHeapField.value("")
+        when: 'Create new database that returns'
+        indexOfNewDatabase = createNewDatabase(create_DatabaseTest_File)
+        then: 'Choose the new database'
+        println(indexOfNewDatabase)
+        chooseDatabase(indexOfNewDatabase, "name_src")
+
+        when: 'Provide Value for Max Java Heap in Advanced'
+        overview.maxJavaHeapField.value("10")
         overview.maxJavaHeapText.click()
-        overview.maxJavaHeapField.value("5")
-        overview.maxJavaHeapText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.maxJavaHeapField.value() == "5") {
+        report "hello"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Max Java Heap in Advanced has changed'
+        if(overview.maxJavaHeapField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -1342,40 +1046,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.maxJavaHeapField.value(oldVariableMaxJavaHeap)
-        overview.maxJavaHeapText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.maxJavaHeapField.value() == oldVariableMaxJavaHeap) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value wasn't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.heartbeatTimeoutField.value("")
+        when: 'Provide Value for Heartbeat Timeout in Advanced'
+        overview.heartbeatTimeoutField.value("10")
         overview.heartbeatTimeoutText.click()
-        overview.heartbeatTimeoutField.value("500")
-        overview.heartbeatTimeoutText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.heartbeatTimeoutField.value() == "500") {
+        report "hello1"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Heartbeat Timeout in Advanced has changed'
+        if(overview.heartbeatTimeoutField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -1383,40 +1061,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.heartbeatTimeoutField.value(oldVariableHeartbeatTimeout)
-        overview.heartbeatTimeoutText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.heartbeatTimeoutField.value() == oldVariableHeartbeatTimeout) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value is't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.queryTimeoutField.value("")
+        when: 'Provide Value for Query Timeout in Advanced'
+        overview.queryTimeoutField.value("10")
         overview.queryTimeoutText.click()
-        overview.queryTimeoutField.value("500")
-        overview.queryTimeoutText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.queryTimeoutField.value() == "500") {
+        report "hello2"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Query Timeout in Advanced has changed'
+        if(overview.queryTimeoutField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -1424,40 +1076,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.queryTimeoutField.value(oldVariableQueryTimeout)
-        overview.queryTimeoutText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.queryTimeoutField.value() == oldVariableQueryTimeout) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value isn't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.maxTempTableMemoryField.value("")
+        when: 'Provide Value for Max Temp Table Memory in Advanced'
+        overview.maxTempTableMemoryField.value("10")
         overview.maxTempTableMemoryText.click()
-        overview.maxTempTableMemoryField.value("500")
-        overview.maxTempTableMemoryText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.maxTempTableMemoryField.value() == "500") {
+        report "hello3"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Max Temp Table Memory in Advanced has changed'
+        if(overview.maxTempTableMemoryField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -1465,40 +1091,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.maxTempTableMemoryField.value(oldVariableMaxTempTableMemory)
-        overview.maxTempTableMemoryText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.maxTempTableMemoryField.value() == oldVariableMaxTempTableMemory) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value isn't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.snapshotPriorityField.value("")
+        when: 'Provide Value for Snapshot Priority in Advanced'
+        overview.snapshotPriorityField.value("10")
         overview.snapshotPriorityText.click()
-        overview.snapshotPriorityField.value("8")
-        overview.snapshotPriorityText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.snapshotPriorityField.value() == "8") {
+        report "hello4"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Snapshot Priority in Advanced has changed'
+        if(overview.snapshotPriorityField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -1506,40 +1106,14 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.snapshotPriorityField.value(oldVariableSnapshotPriority)
-        overview.snapshotPriorityText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.snapshotPriorityField.value() == oldVariableSnapshotPriority) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value isn't Restored")
-            assert false
-        }
-
-        when: 'Provide the value in field'
-        overview.memoryLimitField.value("")
+        when: 'Provide Value for Memory Limit in Advanced'
+        overview.memoryLimitField.value("10")
         overview.memoryLimitText.click()
-        overview.memoryLimitField.value("8")
-        overview.memoryLimitText.click()
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Verify the value in the field'
-        if(overview.memoryLimitField.value() == "8") {
+        report "hello5"
+        and: 'Check Save Message'
+        checkSaveMessage()
+        then: 'Check if Value in Memory Limit in Advanced has changed'
+        if(overview.memoryLimitField.value() == "10") {
             println("Test Pass: The change is displayed")
         }
         else {
@@ -1547,25 +1121,13 @@ class ClusterConfigurationTest extends TestBase {
             assert false
         }
 
-        when: 'Restore old value'
-        overview.memoryLimitField.value(oldVariableMemoryLimit)
-        overview.memoryLimitText.click()
-        and: 'Check the Save message'
-        if(waitFor(60) { saveStatus.text().equals(saveMessage) }) {
-
-        }
-        else {
-            println("Test Fail: The required text is not displayed")
-            assert false
-        }
-        then: 'Check if the old value is restored'
-        if(overview.memoryLimitField.value() == oldVariableMemoryLimit) {
-            println("Test Pass: Value Restored")
-        }
-        else {
-            println("Test Fail: Value isn't Restored")
-            assert false
-        }
+        when: 'Choose the database with index 1'
+        openDatabase()
+        chooseDatabase(indexOfLocal, "local")
+        and: 'Click delete for the required database'
+        openDatabase()
+        then: 'Delete the database'
+        deleteNewDatabase(indexOfNewDatabase, "10")
         println()
     }
 

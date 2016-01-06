@@ -64,7 +64,6 @@ try:
     # Library location relative to script.
     sys.path.insert(0, os.path.join(base_dir, 'lib', 'python'))
     sys.path.insert(0, os.path.join(base_dir, 'lib/python', 'vdm'))
-    print sys.path
     from server import HTTPListener
 # Be selective about exceptions to avoid masking load-time library exceptions.
 except (IOError, OSError, ImportError), e:

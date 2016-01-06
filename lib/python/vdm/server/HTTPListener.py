@@ -44,6 +44,7 @@ DEPLOYMENT = []
 
 DEPLOYMENT_USERS = []
 
+
 @APP.errorhandler(400)
 def not_found(error):
     """
@@ -287,7 +288,8 @@ def map_deployment(request, database_id):
 
     if 'systemsettings' in request.json and 'temptables' in request.json['systemsettings'] \
             and 'maxsize' in request.json['systemsettings']['temptables']:
-        deployment[0]['systemsettings']['temptables']['maxsize'] = request.json['systemsettings']['temptables']['maxsize']
+        deployment[0]['systemsettings']['temptables']['maxsize'] = request.json['systemsettings']['temptables'][
+            'maxsize']
 
     if 'systemsettings' in request.json and 'snapshot' in request.json['systemsettings'] \
             and 'priority' in request.json['systemsettings']['snapshot']:
@@ -308,8 +310,8 @@ def map_deployment(request, database_id):
             request.json['systemsettings']['resourcemonitor']['disklimit']['feature']['size']
 
     if 'systemsettings' in request.json and 'resourcemonitor' in request.json['systemsettings'] \
-        and 'memorylimit' in request.json['systemsettings']['resourcemonitor'] \
-        and 'size' in request.json['systemsettings']['resourcemonitor']['memorylimit']:
+            and 'memorylimit' in request.json['systemsettings']['resourcemonitor'] \
+            and 'size' in request.json['systemsettings']['resourcemonitor']['memorylimit']:
         deployment[0]['systemsettings']['resourcemonitor']['memorylimit']['size'] = \
             request.json['systemsettings']['resourcemonitor']['memorylimit']['size']
 
@@ -395,11 +397,11 @@ def map_deployment(request, database_id):
     if 'dr' in request.json and 'enabled' in request.json['dr']:
         deployment[0]['dr']['enabled'] = request.json['dr']['enabled']
 
-    if 'dr' in request.json and 'connection' in request.json['dr']\
+    if 'dr' in request.json and 'connection' in request.json['dr'] \
             and 'source' in request.json['dr']['connection']:
         deployment[0]['dr']['connection']['source'] = request.json['dr']['connection']['source']
 
-    if 'dr' in request.json and 'connection' in request.json['dr']\
+    if 'dr' in request.json and 'connection' in request.json['dr'] \
             and 'servers' in request.json['dr']['connection']:
         deployment[0]['dr']['connection']['servers'] = request.json['dr']['connection']['servers']
 
@@ -442,6 +444,7 @@ IS_CURRENT_DATABASE_ADDED = False
 
 class ServerAPI(MethodView):
     """Class to handle requests related to server"""
+
     @staticmethod
     def get(server_id):
         """
@@ -751,7 +754,6 @@ class DatabaseMemberAPI(MethodView):
         """
         current_database = [database for database in DATABASES if database['id'] == database_id]
         if len(current_database) == 0:
-
             abort(404)
         if not request.json:
             abort(400)
@@ -770,6 +772,7 @@ class DatabaseMemberAPI(MethodView):
 
 class deploymentAPI(MethodView):
     """Class to handle request related to deployment."""
+
     @staticmethod
     def get(database_id):
         """
@@ -786,7 +789,6 @@ class deploymentAPI(MethodView):
             deployment = [deployment for deployment in DEPLOYMENT if deployment['databaseid'] == database_id]
             return jsonify({'deployment': map_deployment_without_database_id(deployment[0])})
 
-
     @staticmethod
     def put(database_id):
         """
@@ -802,13 +804,13 @@ class deploymentAPI(MethodView):
 
         if 'dr' in request.json and 'type' in request.json['dr']:
             if request.json['dr']['type'] != 'Master':
-                if 'connection' in request.json['dr']\
-                    and 'source' in request.json['dr']['connection'] \
+                if 'connection' in request.json['dr'] \
+                        and 'source' in request.json['dr']['connection'] \
                         and 'servers' in request.json['dr']['connection']:
                     database_selected = [database for database in DATABASES if
                                          database['name'] == str(request.json['dr']['connection']['source'])]
                     if len(database_selected) == 0:
-                            make_response(jsonify({'error': 'The selected database must have database enabled.'}), 404)
+                        make_response(jsonify({'error': 'The selected database must have database enabled.'}), 404)
                     deployment_selected = [deployment1 for deployment1 in DEPLOYMENT
                                            if deployment1['databaseid'] == database_selected[0]['id']]
 
@@ -863,6 +865,7 @@ class deploymentAPI(MethodView):
 
 class deploymentUserAPI(MethodView):
     """Class to handle request related to deployment."""
+
     @staticmethod
     def get(username):
         """
@@ -877,7 +880,6 @@ class deploymentUserAPI(MethodView):
 
         return jsonify({'deployment': deployment_user})
 
-
     @staticmethod
     def put(username, database_id):
         """
@@ -887,20 +889,17 @@ class deploymentUserAPI(MethodView):
         Returns:
             Deployment user object of added deployment user.
         """
-        # if request.json['name'] != username:
-        #     return make_response(jsonify({'error': 'user not found'}), 404)
-
-
 
         inputs = UserInputs(request)
         if not inputs.validate():
             return jsonify(success=False, errors=inputs.errors)
 
-        current_user = [user for user in DEPLOYMENT_USERS if user['name'] == username and user['databaseid']== database_id]
+        current_user = [user for user in DEPLOYMENT_USERS if
+                        user['name'] == username and user['databaseid'] == database_id]
 
-        if len(current_user)!=0:
+        if len(current_user) != 0:
             return make_response(jsonify({'error': 'Duplicate Username'
-                                                         , 'success': False}), 404)
+                                             , 'success': False}), 404)
 
         deployment_user = map_deployment_users(request, username)
         return jsonify({'user': deployment_user, 'status': 1, 'statusstring': 'User Created'})
@@ -914,19 +913,13 @@ class deploymentUserAPI(MethodView):
         Returns:
             Deployment user object of added deployment user.
         """
-        # if request.json['name'] != username:
-        #     return make_response(jsonify({'error': 'user not found'}), 404)
-
-        # for user in DEPLOYMENT_USERS:
-        #     if user['name'] == username:
-        #         return make_response(jsonify({'error': 'Duplicate Username'
-        #                                                  , 'success': False}), 404)
 
         inputs = UserInputs(request)
         if not inputs.validate():
             return jsonify(success=False, errors=inputs.errors)
 
-        current_user = [user for user in DEPLOYMENT_USERS if user['name'] == username and user['databaseid']== database_id]
+        current_user = [user for user in DEPLOYMENT_USERS if
+                        user['name'] == username and user['databaseid'] == database_id]
 
         current_user[0]['name'] = request.json.get('name', current_user[0]['name'])
         current_user[0]['password'] = request.json.get('password', current_user[0]['password'])
@@ -937,10 +930,12 @@ class deploymentUserAPI(MethodView):
 
     @staticmethod
     def delete(username, database_id):
-        current_user = [user for user in DEPLOYMENT_USERS if user['name'] == username and user['databaseid']== database_id]
+        current_user = [user for user in DEPLOYMENT_USERS if
+                        user['name'] == username and user['databaseid'] == database_id]
 
         DEPLOYMENT_USERS.remove(current_user[0])
         return jsonify({'status': 1, 'statusstring': "User Deleted"})
+
 
 def main(runner, amodule, aport):
     try:
@@ -989,7 +984,9 @@ def main(runner, amodule, aport):
                      view_func=DEPLOYMENT_VIEW, methods=['GET'])
 
     APP.add_url_rule('/api/1.0/deployment/<int:database_id>', view_func=DEPLOYMENT_VIEW, methods=['GET', 'PUT'])
-    APP.add_url_rule('/api/1.0/deployment/users/<string:username>', view_func=DEPLOYMENT_USER_VIEW, methods=['GET', 'PUT', 'POST', 'DELETE'])
-    APP.add_url_rule('/api/1.0/deployment/users/<int:database_id>/<string:username>', view_func=DEPLOYMENT_USER_VIEW, methods=['PUT','POST','DELETE'])
+    APP.add_url_rule('/api/1.0/deployment/users/<string:username>', view_func=DEPLOYMENT_USER_VIEW,
+                     methods=['GET', 'PUT', 'POST', 'DELETE'])
+    APP.add_url_rule('/api/1.0/deployment/users/<int:database_id>/<string:username>', view_func=DEPLOYMENT_USER_VIEW,
+                     methods=['PUT', 'POST', 'DELETE'])
 
     APP.run(threaded=True, host='0.0.0.0', port=aport)

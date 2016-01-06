@@ -145,7 +145,7 @@ label.ccErrorMsg {
   height: auto!important;
 
 }
-.clusterIcon, .plus, .stop, .stopServer, .deleteServer,.editServerDatabase,.deleteDatabaseServer,.deleteDisableDS,.editServer, .uploadIcon, .downloadIcon, .drArrow, .popup_close, .popup_close:hover, .clusterConfigIcon, .serverIcon, .plusIcon, .secCrossIcon, .popDelete, .onIcon, .offIcon,.editIcon {
+.clusterIcon, .plus, .stop, .stopServer, .deleteServer,.editServerDatabase,.deleteDatabaseServer,.deleteDisableDS,.editServer, .uploadIcon, .downloadIcon, .drArrow, .popup_close, .popup_close:hover, .clusterConfigIcon, .serverIcon, .plusIcon, .secCrossIcon, .popDelete, .onIcon, .offIcon,.editIcon, .offIconSecurity {
 	background-image: url(../images/icons.png);
 	background-repeat: no-repeat;
 }
@@ -290,6 +290,13 @@ label.ccErrorMsg {
 	position: relative;
     top: 6px;
 }
+.offIconSecurity {
+	width: 31px;
+	height: 17px;
+	background-position: 0 -530px;
+	cursor: pointer;
+	position: relative;
+	top: 6px;}
 .editIcon {
 		width: 120px;
 	padding: 4px 0 7px 40px;
