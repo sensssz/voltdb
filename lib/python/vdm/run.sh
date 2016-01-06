@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 
 function server() {
-    python main.py &
-    cd -
+    python main.py
 }
 
 function tests() {
     echo "Make sure to start the server first"
     cd tests
     python getTests.py
-    cd -
 }
 
 function help() {
