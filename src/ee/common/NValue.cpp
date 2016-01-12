@@ -242,8 +242,8 @@ void NValue::createDecimalFromString(const char* txt, std::size_t txtLength) {
     for (int ii = offsetForSign; ii < static_cast<int>(txtLength); ii++) {
         if ((txt[ii] < '0' || txt[ii] > '9') && txt[ii] != '.') {
             char message[4096];
-            sprintf(message, "Invalid characters in decimal string: ");
-            std::size_t maxChars = std::min(4096 - strlen(message), txtLength + 1);
+            snprintf(message, sizeof(message), "Invalid characters in decimal string: ");
+            std::size_t maxChars = std::min(sizeof(message) - strlen(message), txtLength + 1);
             snprintf(message + strlen(message), maxChars, "%s", txt);
             throw SQLException(SQLException::volt_decimal_serialization_error,
                                message);

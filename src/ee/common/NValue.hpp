@@ -873,7 +873,7 @@ private:
         const StringRef* sref = getObjectReference();
         sref->copyIntoString(outCopy);
     }
-    
+
     const char* getObject_withoutNull(int32_t* lengthOut) const
     {
         if (m_sourceInlined) {
