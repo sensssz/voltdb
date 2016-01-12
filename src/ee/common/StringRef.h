@@ -19,6 +19,7 @@
 #define STRINGREF_H
 
 #include <stdint.h>
+#include <string>
 
 namespace voltdb
 {
@@ -65,7 +66,12 @@ public:
 
     int32_t getObjectLength() const;
 
+    void copyIntoString(std::string& outCopy) const;
     const char* getObject(int32_t* lengthOut) const;
+    // Passing a pointer to a pointer to an int is a little awkward.
+    // but it avoids having to prematurely dereference m_stringPtr,
+    // which MAY improve memory caching?
+    const char* getObjectPointers(int32_t** lengthOut) const;
 
 private:
     // Signature used internally for persistent strings

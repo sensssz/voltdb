@@ -356,9 +356,8 @@ template<> inline NValue NValue::call<FUNC_VOLT_ARRAY_ELEMENT>(const std::vector
     if (indexNVal.isNull()) {
         return getNullStringValue();
     }
-    int32_t lenDoc;
-    const char* docChars = docNVal.getObject_withoutNull(&lenDoc);
-    const std::string doc(docChars, lenDoc);
+    std::string doc;
+    docNVal.copyNonNullObjectIntoString(doc);
 
     int32_t index = indexNVal.castAsIntegerAndGetValue();
 
@@ -416,9 +415,8 @@ template<> inline NValue NValue::callUnary<FUNC_VOLT_ARRAY_LENGTH>() const {
         throwCastSQLException(getValueType(), VALUE_TYPE_VARCHAR);
     }
 
-    int32_t lenDoc;
-    const char* docChars = getObject_withoutNull(&lenDoc);
-    const std::string doc(docChars, lenDoc);
+    std::string doc;
+    copyNonNullObjectIntoString(doc);
 
     Json::Value root;
     Json::Reader reader;

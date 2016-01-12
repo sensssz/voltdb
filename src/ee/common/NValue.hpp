@@ -561,6 +561,7 @@ class NValue {
 
     /* Return a string full of arcana and wonder. */
     std::string debug() const;
+
     std::string toString() const {
         if (isNull()) {
             return "null";
@@ -591,9 +592,9 @@ class NValue {
             value << createStringFromDecimal();
             break;
         case VALUE_TYPE_VARCHAR: {
-            int32_t length;
-            const char* buf = getObject_withoutNull(&length);
-            return std::string(buf, length);
+            std::string outCopy;
+            copyNonNullObjectIntoString(outCopy);
+            return outCopy;
         }
         case VALUE_TYPE_VARBINARY: {
             int32_t length;
@@ -678,7 +679,9 @@ class NValue {
     }
 
     // Declared public for cppunit test purposes .
-    static int64_t parseTimestampString(const std::string &txt);
+    static int64_t parseTimestampString(const char* txt) {
+        return parseTimestampString(txt, strlen(txt));
+    }
 
     static inline int32_t getCharLength(const char *valueChars, const size_t length) {
         // very efficient code to count characters in UTF string and ASCII string
@@ -731,7 +734,7 @@ class NValue {
             return 0;
         }
         assert( ! m_sourceInlined);
-        const StringRef* sref = getObjectPointer();
+        const StringRef* sref = getObjectReference();
         return sref->getAllocatedSize();
     }
 
@@ -742,7 +745,8 @@ private:
      */
 
     // Function declarations for NValue.cpp definitions.
-    void createDecimalFromString(const std::string &txt);
+    static int64_t parseTimestampString(const char* strData, std::size_t strLength);
+    void createDecimalFromString(const char* txt, std::size_t txtLength);
     std::string createStringFromDecimal() const;
 
     // Helpers for inList.
@@ -845,7 +849,7 @@ private:
         tagAsNull();
     }
 
-    const StringRef* getObjectPointer() const
+    const StringRef* getObjectReference() const
     { return *reinterpret_cast<const StringRef* const*>(m_data); }
 
     const char* getObjectValue_withoutNull() const
@@ -853,10 +857,23 @@ private:
         if (m_sourceInlined) {
             return *reinterpret_cast<const char* const*>(m_data) + SHORT_OBJECT_LENGTHLENGTH;
         }
-        const StringRef* sref = getObjectPointer();
+        const StringRef* sref = getObjectReference();
         return sref->getObjectValue();
     }
 
+    void copyNonNullObjectIntoString(std::string& outCopy) const
+    {
+        assert(! isNull());
+        if (m_sourceInlined) {
+            const char* storage = *reinterpret_cast<const char* const*>(m_data);
+            // storage[0] == one-byte length prefix for inline
+            outCopy.assign(storage + SHORT_OBJECT_LENGTHLENGTH, storage[0]);
+            return;
+        }
+        const StringRef* sref = getObjectReference();
+        sref->copyIntoString(outCopy);
+    }
+    
     const char* getObject_withoutNull(int32_t* lengthOut) const
     {
         if (m_sourceInlined) {
@@ -864,8 +881,19 @@ private:
             *lengthOut = storage[0]; // one-byte length prefix for inline
             return storage + SHORT_OBJECT_LENGTHLENGTH; // skip prefix.
         }
-        const StringRef* sref = getObjectPointer();
+        const StringRef* sref = getObjectReference();
         return sref->getObject(lengthOut);
+    }
+
+    const char* getObjectPointers_withoutNull(int32_t** lengthOut) const
+    {
+        if (m_sourceInlined) {
+            const char* storage = *reinterpret_cast<const char* const*>(m_data);
+            **lengthOut = storage[0]; // one-byte length prefix for inline
+            return storage + SHORT_OBJECT_LENGTHLENGTH; // skip prefix.
+        }
+        const StringRef* sref = getObjectReference();
+        return sref->getObjectPointers(lengthOut);
     }
 
     // getters
@@ -1267,8 +1295,7 @@ private:
         case VALUE_TYPE_VARCHAR: {
             int32_t length;
             const char* buf = getObject_withoutNull(&length);
-            const std::string value(buf, length);
-            retval.getTimestamp() = parseTimestampString(value);
+            retval.getTimestamp() = parseTimestampString(buf, length);
             break;
         }
         case VALUE_TYPE_VARBINARY:
@@ -1583,9 +1610,8 @@ private:
         case VALUE_TYPE_VARCHAR:
         {
             int32_t length;
-            const char* buf = getObject_withoutNull(&length);
-            const std::string value(buf, length);
-            retval.createDecimalFromString(value);
+            const char* txt = getObject_withoutNull(&length);
+            retval.createDecimalFromString(txt, length);
             break;
         }
         default:
@@ -2312,7 +2338,7 @@ private:
 
     static NValue getDecimalValueFromString(const std::string &value) {
         NValue retval(VALUE_TYPE_DECIMAL);
-        retval.createDecimalFromString(value);
+        retval.createDecimalFromString(value.c_str(), value.size());
         return retval;
     }
 
@@ -2780,7 +2806,7 @@ inline void NValue::serializeToTupleStorage(void *storage, bool isInlined,
             sref = StringRef::create(length, buf, getTempStringPool());
         }
         else {
-            sref = getObjectPointer();
+            sref = getObjectReference();
         }
         *reinterpret_cast<const StringRef**>(storage) = sref;
         return;
@@ -3201,7 +3227,7 @@ inline void NValue::allocateObjectFromOutlinedValue()
 
     // get the outline data
     int32_t length;
-    const char* source = getObjectPointer()->getObject(&length);
+    const char* source = getObjectReference()->getObject(&length);
     Pool* pool = getTempStringPool();
     createObjectPointer(length, source, pool);
 }
@@ -3321,13 +3347,11 @@ inline void NValue::hashCombine(std::size_t &seed) const {
         return;
     case VALUE_TYPE_VARCHAR:
     {
-        if (isNull()) {
-            boost::hash_combine( seed, std::string(""));
-            return;
+        std::string hashComponent;
+        if (! isNull()) {
+            copyNonNullObjectIntoString(hashComponent);
         }
-        int32_t length;
-        const char* buf = getObject_withoutNull(&length);
-        boost::hash_combine(seed, std::string(buf, length));
+        boost::hash_combine(seed, hashComponent);
         return;
     }
     case VALUE_TYPE_VARBINARY:
@@ -3715,7 +3739,8 @@ inline NValue NValue::like(const NValue& rhs) const {
     if (0 == patternUTF8Length) {
         if (0 == valueUTF8Length) {
             return getTrue();
-        } else {
+        }
+        else {
             return getFalse();
         }
     }
@@ -3730,7 +3755,7 @@ inline NValue NValue::like(const NValue& rhs) const {
 
     private:
         // Constructor used internally for temporary recursion contexts.
-        Liker( const Liker& original, const char* valueChars, const char* patternChars) :
+        Liker(const Liker& original, const char* valueChars, const char* patternChars) :
             m_value(original.m_value, valueChars),
             m_pattern(original.m_pattern, patternChars)
              {}

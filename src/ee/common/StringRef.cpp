@@ -34,6 +34,12 @@ const char* StringRef::getObjectValue() const
 int32_t StringRef::getObjectLength() const
 { return asSizedObject(m_stringPtr)->m_size; }
 
+void StringRef::copyIntoString(std::string& outCopy) const
+{
+    outCopy.assign(asSizedObject(m_stringPtr)->m_data,
+                   asSizedObject(m_stringPtr)->m_size);
+}
+
 const char* StringRef::getObject(int32_t* lengthOut) const
 {
     /*/ enable to debug
@@ -43,6 +49,18 @@ const char* StringRef::getObject(int32_t* lengthOut) const
               << std::endl;
     // */
     *lengthOut = asSizedObject(m_stringPtr)->m_size;
+    return asSizedObject(m_stringPtr)->m_data;
+}
+
+const char* StringRef::getObjectPointers(int32_t** lengthOut) const
+{
+    /*/ enable to debug
+    std::cout << this << " DEBUG: getting [" << asSizedObject(m_stringPtr)->m_size << "]"
+              << std::string(asSizedObject(m_stringPtr)->m_data,
+                             asSizedObject(m_stringPtr)->m_size)
+              << std::endl;
+    // */
+    *lengthOut = &(asSizedObject(m_stringPtr)->m_size);
     return asSizedObject(m_stringPtr)->m_data;
 }
 

@@ -22,6 +22,7 @@
 #include "logging/LogManager.h"
 
 #include <cstdio>
+#include <cstring>
 #include <sstream>
 #include <algorithm>
 #include <set>
@@ -225,39 +226,39 @@ std::string NValue::createStringFromDecimal() const {
  *   Set a decimal value from a serialized representation
  *   This function does not handle scientific notation string, Java planner should convert that to plan string first.
  */
-void NValue::createDecimalFromString(const std::string &txt) {
-    if (txt.length() == 0) {
+void NValue::createDecimalFromString(const char* txt, std::size_t txtLength) {
+    if (txtLength == 0) {
         throw SQLException(SQLException::volt_decimal_serialization_error,
                                        "Empty string provided");
     }
-    bool setSign = false;
+    int offsetForSign = 0;
     if (txt[0] == '-') {
-        setSign = true;
+        offsetForSign = 1;
     }
 
     /**
      * Check for invalid characters
      */
-    for (int ii = (setSign ? 1 : 0); ii < static_cast<int>(txt.size()); ii++) {
+    for (int ii = offsetForSign; ii < static_cast<int>(txtLength); ii++) {
         if ((txt[ii] < '0' || txt[ii] > '9') && txt[ii] != '.') {
             char message[4096];
-            snprintf(message, 4096, "Invalid characters in decimal string: %s",
-                     txt.c_str());
+            sprintf(message, "Invalid characters in decimal string: ");
+            std::size_t maxChars = std::min(4096 - strlen(message), txtLength + 1);
+            snprintf(message + strlen(message), maxChars, "%s", txt);
             throw SQLException(SQLException::volt_decimal_serialization_error,
                                message);
         }
     }
 
-    std::size_t separatorPos = txt.find( '.', 0);
-    if (separatorPos == std::string::npos) {
-        const std::string wholeString = txt.substr( setSign ? 1 : 0, txt.size());
-        const std::size_t wholeStringSize = wholeString.size();
-        if (wholeStringSize > 26) {
+    const char* separatorPos = static_cast<const char*>(memchr(txt, '.', txtLength));
+    if (separatorPos == NULL) {
+        if (txtLength - offsetForSign > 26) {
             throw SQLException(SQLException::volt_decimal_serialization_error,
                                "Maximum precision exceeded. Maximum of 26 digits to the left of the decimal point");
         }
+        const std::string wholeString(txt + offsetForSign, txtLength - offsetForSign);
         TTInt whole(wholeString);
-        if (setSign) {
+        if (offsetForSign == 1) {
             whole.SetSign();
         }
         whole *= kMaxScaleFactor;
@@ -265,7 +266,7 @@ void NValue::createDecimalFromString(const std::string &txt) {
         return;
     }
 
-    if (txt.find( '.', separatorPos + 1) != std::string::npos) {
+    if (memchr(separatorPos+1, '.', txtLength - (separatorPos+1 - txt)) != NULL) {
         throw SQLException(SQLException::volt_decimal_serialization_error,
                            "Too many decimal points");
     }
@@ -277,7 +278,7 @@ void NValue::createDecimalFromString(const std::string &txt) {
 
     // Start with the fractional part.  We need to
     // see if we need to carry from it first.
-    std::string fractionalString = txt.substr( separatorPos + 1, txt.size() - (separatorPos + 1));
+    std::string fractionalString(separatorPos+1, txtLength - (separatorPos+1 - txt));
     // remove trailing zeros
     while (fractionalString.size() > 0 && fractionalString[fractionalString.size() - 1] == '0')
         fractionalString.erase(fractionalString.size() - 1, 1);
@@ -296,8 +297,9 @@ void NValue::createDecimalFromString(const std::string &txt) {
     if (fractionalString.size() > kMaxDecScale) {
         carryScale = ('5' <= fractionalString[kMaxDecScale]) ? 1 : 0;
         fractionalString = fractionalString.substr(0, kMaxDecScale);
-    } else {
-        while(fractionalString.size() < NValue::kMaxDecScale) {
+    }
+    else {
+        while (fractionalString.size() < NValue::kMaxDecScale) {
             fractionalString.push_back('0');
         }
     }
@@ -320,7 +322,7 @@ void NValue::createDecimalFromString(const std::string &txt) {
     }
 
     // Process the whole number string.
-    const std::string wholeString = txt.substr( setSign ? 1 : 0, separatorPos - (setSign ? 1 : 0));
+    const std::string wholeString(txt + offsetForSign, separatorPos - (txt + offsetForSign));
     // We will check for oversize numbers below, so don't waste time
     // doing it now.
     TTInt whole(wholeString);
@@ -332,7 +334,7 @@ void NValue::createDecimalFromString(const std::string &txt) {
     whole *= kMaxScaleFactor;
     whole += fractional;
 
-    if (setSign) {
+    if (offsetForSign == 1) {
         whole.SetSign();
     }
 
@@ -508,8 +510,9 @@ void NValue::streamTimestamp(std::stringstream& value) const
     value << mbstr;
 }
 
-inline static void throwTimestampFormatError(const std::string &str)
+inline static void throwTimestampFormatError(const char* strData, std::size_t strLength)
 {
+    const std::string str(strData, strLength);
     char message[4096];
     // No space separator for between the date and time
     snprintf(message, 4096, "Attempted to cast \'%s\' to type %s failed. Supported format: \'YYYY-MM-DD HH:MM:SS.UUUUUU\'"
@@ -518,10 +521,10 @@ inline static void throwTimestampFormatError(const std::string &str)
     throw SQLException(SQLException::dynamic_sql_error, message);
 }
 
-int64_t NValue::parseTimestampString(const std::string &str)
+int64_t NValue::parseTimestampString(const char* strData, std::size_t strLength)
 {
     // date_str
-    std::string date_str(str);
+    std::string date_str(strData, strLength);
     // This is the std:string API for "ltrim" and "rtrim".
     date_str.erase(date_str.begin(), std::find_if(date_str.begin(), date_str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
     date_str.erase(std::find_if(date_str.rbegin(), date_str.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), date_str.end());
@@ -544,19 +547,19 @@ int64_t NValue::parseTimestampString(const std::string &str)
     case 26:
         sep_pos  = date_str.find(' ');
         if (sep_pos != 10) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
 
         time_str = date_str.substr(sep_pos + 1);
         // This is the std:string API for "ltrim"
         time_str.erase(time_str.begin(), std::find_if(time_str.begin(), time_str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
         if (time_str.length() != 15) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
 
         // tokenize time_str: HH:MM:SS.mmmmmm
         if (time_str.at(2) != ':' || time_str.at(5) != ':' || time_str.at(8) != '.') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
 
         // HH
@@ -569,44 +572,44 @@ int64_t NValue::parseTimestampString(const std::string &str)
         } else if (pch[0] == '2') {
             hour = 20;
         } else {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         if (pch[1] > '9' || pch[1] < '0') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         hour += pch[1] - '0';
         if (hour > 23 || hour < 0) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
 
         // MM
         number_string = time_str.substr(3,2);
         pch = number_string.c_str();
         if (pch[0] > '5' || pch[0] < '0') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         minute = 10*(pch[0] - '0');
         if (pch[1] > '9' || pch[1] < '0') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         minute += pch[1] - '0';
         if (minute > 59 || minute < 0) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
 
         // SS
         number_string = time_str.substr(6,2);
         pch = number_string.c_str();
         if (pch[0] > '5' || pch[0] < '0') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         second = 10*(pch[0] - '0');
         if (pch[1] > '9' || pch[1] < '0') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         second += pch[1] - '0';
         if (second > 59 || second < 0) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         // hack a '1' in the place if the decimal and use atoi to get a value that
         // MUST be between 1 and 2 million if all 6 digits of micros were included.
@@ -615,11 +618,11 @@ int64_t NValue::parseTimestampString(const std::string &str)
         pch = number_string.c_str();
         micro = atoi(pch);
         if (micro >= 2000000 || micro < 1000000) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
     case 10:
         if (date_str.at(4) != '-' || date_str.at(7) != '-') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
 
         number_string = date_str.substr(0,4);
@@ -630,7 +633,7 @@ int64_t NValue::parseTimestampString(const std::string &str)
         // new years day 10000 is likely to cause problems.
         // There's a boost library limitation against years before 1400.
         if (year > 9999 || year < 1400) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
 
         // MM
@@ -641,14 +644,14 @@ int64_t NValue::parseTimestampString(const std::string &str)
         } else if (pch[0] == '1') {
             month = 10;
         } else {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         if (pch[1] > '9' || pch[1] < '0') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         month += pch[1] - '0';
         if (month > 12 || month < 1) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
 
         // DD
@@ -663,18 +666,18 @@ int64_t NValue::parseTimestampString(const std::string &str)
         } else if (pch[0] == '3') {
             day = 30;
         } else {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         if (pch[1] > '9' || pch[1] < '0') {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         day += pch[1] - '0';
         if (day > 31 || day < 1) {
-            throwTimestampFormatError(str);
+            throwTimestampFormatError(strData, strLength);
         }
         break;
     default:
-        throwTimestampFormatError(str);
+        throwTimestampFormatError(strData, strLength);
     }
 
     int64_t result = 0;
@@ -683,7 +686,7 @@ int64_t NValue::parseTimestampString(const std::string &str)
             (unsigned short int)year, (unsigned short int)month, (unsigned short int)day,
             hour, minute, second);
     } catch (const std::out_of_range& bad) {
-        throwTimestampFormatError(str);
+        throwTimestampFormatError(strData, strLength);
     }
     result += (micro - 1000000);
     return result;

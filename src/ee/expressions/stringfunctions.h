@@ -93,12 +93,11 @@ template<> inline NValue NValue::callUnary<FUNC_FOLD_LOWER>() const {
         throwCastSQLException (getValueType(), VALUE_TYPE_VARCHAR);
     }
 
-    int32_t length;
-    const char* buf = getObject_withoutNull(&length);
-    std::string inputStr(buf, length);
+    std::string inputStr;
+    copyNonNullObjectIntoString(inputStr);
     boost::algorithm::to_lower(inputStr);
 
-    return getTempStringValue(inputStr.c_str(), length);
+    return getTempStringValue(inputStr.c_str(), inputStr.size());
 }
 
 template<> inline NValue NValue::callUnary<FUNC_FOLD_UPPER>() const {
@@ -109,12 +108,11 @@ template<> inline NValue NValue::callUnary<FUNC_FOLD_UPPER>() const {
         throwCastSQLException (getValueType(), VALUE_TYPE_VARCHAR);
     }
 
-    int32_t length;
-    const char* buf = getObject_withoutNull(&length);
-    std::string inputStr(buf, length);
+    std::string inputStr;
+    copyNonNullObjectIntoString(inputStr);
     boost::algorithm::to_upper(inputStr);
 
-    return getTempStringValue(inputStr.c_str(), length);
+    return getTempStringValue(inputStr.c_str(), inputStr.size());
 }
 
 /** implement the 2-argument SQL REPEAT function */
@@ -178,15 +176,14 @@ template<> inline NValue NValue::call<FUNC_POSITION_CHAR>(const std::vector<NVal
     int32_t lenTarget;
     const char* targetChars = target.getObject_withoutNull(&lenTarget);
 
-    int32_t lenPool;
-    const char* poolChars = pool.getObject_withoutNull(&lenPool);
-    std::string poolStr(poolChars, lenPool);
+    std::string poolStr;
+    pool.copyNonNullObjectIntoString(poolStr);
 
     size_t position = poolStr.find(targetChars, 0, lenTarget);
     if (position == std::string::npos)
         position = 0;
     else {
-        position = NValue::getCharLength(poolStr.substr(0,position).c_str(),position) + 1;
+        position = NValue::getCharLength(poolStr.substr(0, position).c_str(), position) + 1;
     }
     return getIntegerValue(static_cast<int32_t>(position));
 }
@@ -363,25 +360,23 @@ inline NValue NValue::trimWithOptions(const std::vector<NValue>& arguments, bool
         throwCastSQLException (trimChar.getValueType(), VALUE_TYPE_VARCHAR);
     }
 
-    int32_t length;
-    const char* buf = trimChar.getObject_withoutNull(&length);
+    std::string trimArg;
+    trimChar.copyNonNullObjectIntoString(trimArg);
     // SQL03 standard only allows a 1-character trim character.
     // In order to be compatible with other popular databases like MySQL,
     // our implementation also allows multiple characters, but rejects 0 characters.
-    if (length == 0) {
+    if (trimArg.size() == 0) {
         throw SQLException(SQLException::data_exception_numeric_value_out_of_range,
                 "data exception -- trim error, invalid trim character length 0");
     }
-
-    std::string trimArg(buf, length);
 
     const NValue& strVal = arguments[1];
     if (strVal.getValueType() != VALUE_TYPE_VARCHAR) {
         throwCastSQLException (trimChar.getValueType(), VALUE_TYPE_VARCHAR);
     }
 
-    buf = strVal.getObject_withoutNull(&length);
-    std::string inputStr(buf, length);
+    std::string inputStr;
+    strVal.copyNonNullObjectIntoString(inputStr);
 
     std::string result = trim_function(inputStr, trimArg, leading, trailing);
     return getTempStringValue(result.c_str(), result.length());
@@ -415,24 +410,23 @@ template<> inline NValue NValue::call<FUNC_REPLACE>(const std::vector<NValue>& a
     if (str0.getValueType() != VALUE_TYPE_VARCHAR) {
         throwCastSQLException (str0.getValueType(), VALUE_TYPE_VARCHAR);
     }
-    int32_t length;
-    const char* buf = str0.getObject_withoutNull(&length);
-    std::string targetStr(buf, length);
+    std::string targetStr;
+    str0.copyNonNullObjectIntoString(targetStr);
 
     const NValue& str1 = arguments[1];
     if (str1.getValueType() != VALUE_TYPE_VARCHAR) {
         throwCastSQLException (str1.getValueType(), VALUE_TYPE_VARCHAR);
     }
-    buf = str1.getObject_withoutNull(&length);
-    std::string matchStr(buf, length);
+    std::string matchStr;
+    str1.copyNonNullObjectIntoString(matchStr);
 
     const NValue& str2 = arguments[2];
 
     if (str2.getValueType() != VALUE_TYPE_VARCHAR) {
         throwCastSQLException (str2.getValueType(), VALUE_TYPE_VARCHAR);
     }
-    buf = str2.getObject_withoutNull(&length);
-    std::string replaceStr(buf, length);
+    std::string replaceStr;
+    str2.copyNonNullObjectIntoString(replaceStr);
 
     boost::algorithm::replace_all(targetStr, matchStr, replaceStr);
     return getTempStringValue(targetStr.c_str(), targetStr.length());
@@ -524,9 +518,8 @@ template<> inline NValue NValue::call<FUNC_OVERLAY_CHAR>(const std::vector<NValu
     if (str1.getValueType() != VALUE_TYPE_VARCHAR) {
         throwCastSQLException (str1.getValueType(), VALUE_TYPE_VARCHAR);
     }
-    int32_t lenInsert;
-    const char* insertChars = str1.getObject_withoutNull(&lenInsert);
-    std::string insertStr(insertChars, lenInsert);
+    std::string insertStr;
+    str1.copyNonNullObjectIntoString(insertStr);
 
     const NValue& startArg = arguments[2];
 
@@ -550,7 +543,7 @@ template<> inline NValue NValue::call<FUNC_OVERLAY_CHAR>(const std::vector<NValu
     }
     else {
         // By default without length argument
-        length = getCharLength(insertChars, lenInsert);
+        length = getCharLength(insertStr.c_str(), insertStr.size());
     }
 
     assert(start >= 1);
@@ -685,11 +678,8 @@ template<> inline NValue NValue::call<FUNC_VOLT_REGEXP_POSITION>(const std::vect
             int32_t lenFlags;
             const char* flagChars = reinterpret_cast<const char*>
                 (flags.getObject_withoutNull(&lenFlags));
-            // temporary workaround to make sure the string we are operating on is null terminated
-            std::string flagStr(flagChars, lenFlags);
-
-            for(std::string::iterator it = flagStr.begin(); it != flagStr.end(); ++it) {
-                switch (*it) {
+            for (int ii = 0; ii < lenFlags; ++ii) {
+                switch (flagChars[ii]) {
                     case 'c':
                         syntaxOpts &= ~PCRE2_CASELESS;
                         break;
