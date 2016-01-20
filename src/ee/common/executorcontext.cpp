@@ -236,22 +236,58 @@ void ExecutorContext::setDrStream(AbstractDRTupleStream *drStream) {
     assert (m_drStream != NULL);
     assert (drStream != NULL);
     assert (m_drStream->m_committedSequenceNumber >= drStream->m_committedSequenceNumber);
+
+    VOLT_INFO("Before set DR stream,  current USO %jd, committed USO %jd, "
+            "open spHandle %jd, committed spHandle %jd, "
+            "open sequence number %jd, committed sequence number %jd, from parition %jd\n",
+            (intmax_t)m_drStream->m_uso, (intmax_t)m_drStream->m_committedUso,
+            (intmax_t)m_drStream->m_openSpHandle, (intmax_t)m_drStream->m_committedSpHandle,
+            (intmax_t)m_drStream->m_openSequenceNumber, (intmax_t)m_drStream->m_committedSequenceNumber,
+            (intmax_t)this->m_partitionId);
+
     int64_t lastCommittedSpHandle = std::max(m_lastCommittedSpHandle, drStream->m_openSpHandle);
     m_drStream->periodicFlush(-1L, lastCommittedSpHandle);
     int64_t oldSeqNum = m_drStream->m_committedSequenceNumber;
     m_drStream = drStream;
     m_drStream->setLastCommittedSequenceNumber(oldSeqNum);
+
+    VOLT_INFO("After set DR stream,  current USO %jd, committed USO %jd, "
+            "open spHandle %jd, committed spHandle %jd, "
+            "open sequence number %jd, committed sequence number %jd, from parition %jd\n",
+            (intmax_t)m_drStream->m_uso, (intmax_t)m_drStream->m_committedUso,
+            (intmax_t)m_drStream->m_openSpHandle, (intmax_t)m_drStream->m_committedSpHandle,
+            (intmax_t)m_drStream->m_openSequenceNumber, (intmax_t)m_drStream->m_committedSequenceNumber,
+            (intmax_t)this->m_partitionId);
 }
 
 void ExecutorContext::setDrReplicatedStream(AbstractDRTupleStream *drReplicatedStream) {
     assert (m_drReplicatedStream != NULL);
     assert (drReplicatedStream != NULL);
     assert (m_drReplicatedStream->m_committedSequenceNumber >= drReplicatedStream->m_committedSequenceNumber);
+
+    VOLT_INFO("Before set DR replicated stream,  current USO %jd, committed USO %jd, "
+            "open spHandle %jd, committed spHandle %jd, "
+            "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+            (intmax_t)m_drReplicatedStream->m_uso, (intmax_t)m_drReplicatedStream->m_committedUso,
+            (intmax_t)m_drReplicatedStream->m_openSpHandle, (intmax_t)m_drReplicatedStream->m_committedSpHandle,
+            (intmax_t)m_drReplicatedStream->m_openSequenceNumber,
+            (intmax_t)m_drReplicatedStream->m_committedSequenceNumber,
+            (intmax_t)this->m_partitionId);
+
     int64_t lastCommittedSpHandle = std::max(m_lastCommittedSpHandle, drReplicatedStream->m_openSpHandle);
     m_drReplicatedStream->periodicFlush(-1L, lastCommittedSpHandle);
     int64_t oldSeqNum = m_drReplicatedStream->m_committedSequenceNumber;
     m_drReplicatedStream = drReplicatedStream;
     m_drReplicatedStream->setLastCommittedSequenceNumber(oldSeqNum);
+
+    VOLT_INFO("After set DR replicated stream,  current USO %jd, committed USO %jd, "
+            "open spHandle %jd, committed spHandle %jd, "
+            "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+            (intmax_t)m_drReplicatedStream->m_uso, (intmax_t)m_drReplicatedStream->m_committedUso,
+            (intmax_t)m_drReplicatedStream->m_openSpHandle, (intmax_t)m_drReplicatedStream->m_committedSpHandle,
+            (intmax_t)m_drReplicatedStream->m_openSequenceNumber,
+            (intmax_t)m_drReplicatedStream->m_committedSequenceNumber,
+            (intmax_t)this->m_partitionId);
 }
 
 } // end namespace voltdb
