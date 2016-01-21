@@ -47,7 +47,7 @@ public:
      * Release any resources held by the undo action. It will not need
      * to be undone in the future.
      */
-    void release() { }
+    void release() { /*VOLT_ERROR("In releaseUndoToken() releasing uso %jd\n", (intmax_t)m_drMark);*/ }
 private:
     char* m_tuple;
     PersistentTableSurgeon *m_table;

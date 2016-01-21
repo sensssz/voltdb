@@ -351,6 +351,14 @@ void DRTupleStream::beginTransaction(int64_t sequenceNumber, int64_t uniqueId) {
      m_uso += io.position();
 
      m_opened = true;
+
+//     VOLT_ERROR("At beginTransaction(),  current USO %jd, committed USO %jd, "
+//                 "open spHandle %jd, committed spHandle %jd, "
+//                 "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+//                 (intmax_t)m_uso, (intmax_t)m_committedUso,
+//                 (intmax_t)m_openSpHandle, (intmax_t)m_committedSpHandle,
+//                 (intmax_t)m_openSequenceNumber, (intmax_t)m_committedSequenceNumber,
+//                 (intmax_t)this->m_partitionId);
 }
 
 void DRTupleStream::endTransaction(int64_t uniqueId) {
@@ -419,6 +427,14 @@ void DRTupleStream::endTransaction(int64_t uniqueId) {
         extendBufferChain(0);
     }
     m_txnRowCount = 0;
+
+//    VOLT_ERROR("At endTransaction(),  current USO %jd, committed USO %jd, "
+//            "open spHandle %jd, committed spHandle %jd, "
+//            "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+//            (intmax_t)m_uso, (intmax_t)m_committedUso,
+//            (intmax_t)m_openSpHandle, (intmax_t)m_committedSpHandle,
+//            (intmax_t)m_openSequenceNumber, (intmax_t)m_committedSequenceNumber,
+//            (intmax_t)this->m_partitionId);
 }
 
 // If partial transaction is going to span multiple buffer, first time move it to

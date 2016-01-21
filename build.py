@@ -139,7 +139,6 @@ if "VOLT_LOG_LEVEL" in os.environ:
 else:
     LOG_LEVEL = "500"
 
-LOG_LEVEL = "300"
 if CTX.LEVEL == "MEMCHECK":
     CTX.CPPFLAGS += " -g3 -DDEBUG -DMEMCHECK -DVOLT_LOG_LEVEL=%s" % LOG_LEVEL
     CTX.OUTPUT_PREFIX = "obj/memcheck"

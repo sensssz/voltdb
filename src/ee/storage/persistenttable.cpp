@@ -546,6 +546,8 @@ void PersistentTable::insertTupleCommon(TableTuple &source, TableTuple &target, 
             //* enable for debug */ std::cout << "DEBUG: inserting " << (void*)target.address()
             //* enable for debug */           << " { " << target.debugNoHeader() << " } "
             //* enable for debug */           << " copied to " << (void*)tupleData << std::endl;
+//            VOLT_ERROR("At insertTupleCommon(), undoUso is %jd, from partition %jd\n",
+//                    (intmax_t)drMark, (intmax_t)ec->m_partitionId);
             uq->registerUndoAction(new (*uq) PersistentTableUndoInsertAction(tupleData, &m_surgeon, drMark));
         }
     }
