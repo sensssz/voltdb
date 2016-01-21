@@ -47,7 +47,7 @@ public class TestJoinsSuite extends RegressionSuite {
         client.callProcedure("@AdHoc", "DELETE FROM P1;");
     }
 
-    public void notestSeqJoins()
+    public void testSeqJoins()
             throws NoConnectionsException, IOException, ProcCallException
     {
         Client client = getClient();
@@ -272,7 +272,7 @@ public class TestJoinsSuite extends RegressionSuite {
         assertEquals(4, result.getRowCount());
     }
 
-    public void notestIndexJoins()
+    public void testIndexJoins()
             throws NoConnectionsException, IOException, ProcCallException
     {
         Client client = getClient();
@@ -713,7 +713,7 @@ public class TestJoinsSuite extends RegressionSuite {
      * @throws IOException
      * @throws ProcCallException
      */
-    public void notestInListJoin()
+    public void testInListJoin()
             throws NoConnectionsException, IOException, ProcCallException
     {
         Client client = this.getClient();
@@ -798,7 +798,7 @@ public class TestJoinsSuite extends RegressionSuite {
      * @throws IOException
      * @throws ProcCallException
      */
-    public void notestOuterJoin() throws NoConnectionsException, IOException, ProcCallException
+    public void testOuterJoin() throws NoConnectionsException, IOException, ProcCallException
     {
         Client client = this.getClient();
         subtestOuterJoinMultiTable(client);
@@ -891,10 +891,12 @@ public class TestJoinsSuite extends RegressionSuite {
         project.addStmtProcedure("InsertP1", "INSERT INTO P1 VALUES(?, ?);");
         project.addStmtProcedure("InsertP2", "INSERT INTO P2 VALUES(?, ?);");
         project.addStmtProcedure("InsertP3", "INSERT INTO P3 VALUES(?, ?);");
+        /*
         // One site (for debugging).
-        config = new LocalCluster("testunion-onesite.jar", 1, 1, 0, BackendTarget.NATIVE_EE_IPC);
+        config = new LocalCluster("testunion-onesite.jar", 1, 1, 0, BackendTarget.NATIVE_EE_JNI);
         if (!config.compile(project)) fail();
         builder.addServerConfig(config);
+        */
         // Cluster
         config = new LocalCluster("testunion-cluster.jar", 2, 3, 1, BackendTarget.NATIVE_EE_JNI);
         if (!config.compile(project)) fail();
