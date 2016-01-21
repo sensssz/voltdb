@@ -237,9 +237,10 @@ void ExecutorContext::setDrStream(AbstractDRTupleStream *drStream) {
     assert (drStream != NULL);
     assert (m_drStream->m_committedSequenceNumber >= drStream->m_committedSequenceNumber);
 
-    VOLT_ERROR("Before set DR stream,  current USO %jd, committed USO %jd, "
+    VOLT_ERROR("Before set DR stream, m_opened %s, current USO %jd, committed USO %jd, "
             "open spHandle %jd, committed spHandle %jd, "
             "open sequence number %jd, committed sequence number %jd, from parition %jd\n",
+            m_drStream->m_opened ? "true" : "false",
             (intmax_t)m_drStream->m_uso, (intmax_t)m_drStream->m_committedUso,
             (intmax_t)m_drStream->m_openSpHandle, (intmax_t)m_drStream->m_committedSpHandle,
             (intmax_t)m_drStream->m_openSequenceNumber, (intmax_t)m_drStream->m_committedSequenceNumber,
@@ -251,9 +252,10 @@ void ExecutorContext::setDrStream(AbstractDRTupleStream *drStream) {
     m_drStream = drStream;
     m_drStream->setLastCommittedSequenceNumber(oldSeqNum);
 
-    VOLT_ERROR("After set DR stream,  current USO %jd, committed USO %jd, "
+    VOLT_ERROR("After set DR stream, m_opened %s, current USO %jd, committed USO %jd, "
             "open spHandle %jd, committed spHandle %jd, "
             "open sequence number %jd, committed sequence number %jd, from parition %jd\n",
+            m_drStream->m_opened ? "true" : "false",
             (intmax_t)m_drStream->m_uso, (intmax_t)m_drStream->m_committedUso,
             (intmax_t)m_drStream->m_openSpHandle, (intmax_t)m_drStream->m_committedSpHandle,
             (intmax_t)m_drStream->m_openSequenceNumber, (intmax_t)m_drStream->m_committedSequenceNumber,
@@ -265,9 +267,10 @@ void ExecutorContext::setDrReplicatedStream(AbstractDRTupleStream *drReplicatedS
     assert (drReplicatedStream != NULL);
     assert (m_drReplicatedStream->m_committedSequenceNumber >= drReplicatedStream->m_committedSequenceNumber);
 
-    VOLT_ERROR("Before set DR replicated stream,  current USO %jd, committed USO %jd, "
+    VOLT_ERROR("Before set DR replicated stream, m_opened %s, current USO %jd, committed USO %jd, "
             "open spHandle %jd, committed spHandle %jd, "
             "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+            m_drReplicatedStream->m_opened ? "true" : "false",
             (intmax_t)m_drReplicatedStream->m_uso, (intmax_t)m_drReplicatedStream->m_committedUso,
             (intmax_t)m_drReplicatedStream->m_openSpHandle, (intmax_t)m_drReplicatedStream->m_committedSpHandle,
             (intmax_t)m_drReplicatedStream->m_openSequenceNumber,
@@ -280,9 +283,10 @@ void ExecutorContext::setDrReplicatedStream(AbstractDRTupleStream *drReplicatedS
     m_drReplicatedStream = drReplicatedStream;
     m_drReplicatedStream->setLastCommittedSequenceNumber(oldSeqNum);
 
-    VOLT_ERROR("After set DR replicated stream,  current USO %jd, committed USO %jd, "
+    VOLT_ERROR("After set DR replicated stream, m_opened %s, current USO %jd, committed USO %jd, "
             "open spHandle %jd, committed spHandle %jd, "
             "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+            m_drReplicatedStream->m_opened ? "true" : "false",
             (intmax_t)m_drReplicatedStream->m_uso, (intmax_t)m_drReplicatedStream->m_committedUso,
             (intmax_t)m_drReplicatedStream->m_openSpHandle, (intmax_t)m_drReplicatedStream->m_committedSpHandle,
             (intmax_t)m_drReplicatedStream->m_openSequenceNumber,

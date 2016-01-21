@@ -99,11 +99,11 @@ public:
     virtual DRCommittedInfo getLastCommittedSequenceNumberAndUniqueIds() = 0;
 
     bool m_enabled;
+    bool m_opened;
 protected:
     CatalogId m_partitionId;
     size_t m_secondaryCapacity;
     int64_t m_rowTarget;
-    bool m_opened;
     size_t m_txnRowCount;
 };
 
