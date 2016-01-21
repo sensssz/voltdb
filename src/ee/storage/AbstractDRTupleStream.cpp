@@ -24,9 +24,9 @@ using namespace voltdb;
 AbstractDRTupleStream::AbstractDRTupleStream()
         : TupleStreamBase(MAGIC_DR_TRANSACTION_PADDING),
           m_enabled(true),
+          m_opened(false),
           m_secondaryCapacity(SECONDARY_BUFFER_SIZE),
           m_rowTarget(-1),
-          m_opened(false),
           m_txnRowCount(0) {
 
 }
