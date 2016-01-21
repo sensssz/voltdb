@@ -674,6 +674,13 @@ inline void TableTuple::setNValues(int beginIdx, TableTuple lhs, int begin, int 
 {
     assert(m_schema);
     assert(lhs.getSchema());
+    if (!(beginIdx + end - begin <= sizeInValues())) {
+        std::cout << "beginIdx: " << beginIdx
+                << ", end: " << end
+                << ", begin: " << begin
+                << ", sizeInValues(): " << sizeInValues()
+                << std::endl;
+    }
     assert(beginIdx + end - begin <= sizeInValues());
     while (begin != end) {
         setNValue(beginIdx++, lhs.getNValue(begin++));

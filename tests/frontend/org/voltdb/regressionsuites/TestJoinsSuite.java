@@ -29,6 +29,7 @@ import org.voltdb.BackendTarget;
 import org.voltdb.VoltTable;
 import org.voltdb.VoltTableRow;
 import org.voltdb.client.Client;
+import org.voltdb.client.ClientResponse;
 import org.voltdb.client.NoConnectionsException;
 import org.voltdb.client.ProcCallException;
 import org.voltdb.compiler.VoltProjectBuilder;
@@ -46,7 +47,7 @@ public class TestJoinsSuite extends RegressionSuite {
         client.callProcedure("@AdHoc", "DELETE FROM P1;");
     }
 
-    public void testSeqJoins()
+    public void notestSeqJoins()
             throws NoConnectionsException, IOException, ProcCallException
     {
         Client client = getClient();
@@ -271,7 +272,7 @@ public class TestJoinsSuite extends RegressionSuite {
         assertEquals(4, result.getRowCount());
     }
 
-    public void testIndexJoins()
+    public void notestIndexJoins()
             throws NoConnectionsException, IOException, ProcCallException
     {
         Client client = getClient();
@@ -712,7 +713,7 @@ public class TestJoinsSuite extends RegressionSuite {
      * @throws IOException
      * @throws ProcCallException
      */
-    public void testInListJoin()
+    public void notestInListJoin()
             throws NoConnectionsException, IOException, ProcCallException
     {
         Client client = this.getClient();
@@ -797,7 +798,7 @@ public class TestJoinsSuite extends RegressionSuite {
      * @throws IOException
      * @throws ProcCallException
      */
-    public void testOuterJoin() throws NoConnectionsException, IOException, ProcCallException
+    public void notestOuterJoin() throws NoConnectionsException, IOException, ProcCallException
     {
         Client client = this.getClient();
         subtestOuterJoinMultiTable(client);
@@ -863,6 +864,20 @@ public class TestJoinsSuite extends RegressionSuite {
     }
 
 
+    public void testENG9796() throws Exception {
+        Client client = getClient();
+        // Load the database.
+        client.callProcedure("R9796_1.INSERT", 100, 101,      102, "2013-07-18 02:00:00.123457");
+        client.callProcedure("R9796_1.INSERT", 110, 111,      112, "2013-07-18 02:00:00.123457");
+        client.callProcedure("R9796_1.INSERT", 120, 121,      122, "2013-07-18 02:00:00.123457");
+        client.callProcedure("R9796_2.INSERT", 200, 100+101,       "2013-07-18 02:00:00.123457");
+        client.callProcedure("R9796_2.INSERT", 201, 110+111,       "2013-07-18 02:00:00.123457");
+        client.callProcedure("R9796_2.INSERT", 201, 120+121,       "2013-07-18 02:00:00.123457");
+        String sql = "SELECT S1.* FROM (R9796_1 JOIN R9796_2 USING(TM)) as S1, (R9796_1 join R9796_2 using(TM)) as S2;";
+        ClientResponse cr = client.callProcedure("@AdHoc", sql);
+        assertEquals(ClientResponse.SUCCESS, cr.getStatus());
+    }
+
     static public junit.framework.Test suite()
     {
         VoltServerConfig config = null;
@@ -876,11 +891,10 @@ public class TestJoinsSuite extends RegressionSuite {
         project.addStmtProcedure("InsertP1", "INSERT INTO P1 VALUES(?, ?);");
         project.addStmtProcedure("InsertP2", "INSERT INTO P2 VALUES(?, ?);");
         project.addStmtProcedure("InsertP3", "INSERT INTO P3 VALUES(?, ?);");
-        /*
-        config = new LocalCluster("testunion-onesite.jar", 1, 1, 0, BackendTarget.NATIVE_EE_JNI);
+        // One site (for debugging).
+        config = new LocalCluster("testunion-onesite.jar", 1, 1, 0, BackendTarget.NATIVE_EE_IPC);
         if (!config.compile(project)) fail();
         builder.addServerConfig(config);
-        */
         // Cluster
         config = new LocalCluster("testunion-cluster.jar", 2, 3, 1, BackendTarget.NATIVE_EE_JNI);
         if (!config.compile(project)) fail();
