@@ -273,6 +273,11 @@ class ExecutorContext {
     std::string m_hostname;
     CatalogId m_hostId;
     CatalogId m_drClusterId;
+
+    int64_t m_debugOpenSeqNum;
+    int64_t m_debugCommittedSeqNum;
+    int64_t m_debugReplicatedOpenSeqNum;
+    int64_t m_debugReplicatedCommittedSeqNum;
 };
 
 }

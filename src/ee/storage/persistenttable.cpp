@@ -401,6 +401,39 @@ void PersistentTable::truncateTable(VoltDBEngine* engine, bool fallible) {
         const int64_t currentTxnId = ec->currentTxnId();
         const int64_t currentSpHandle = ec->currentSpHandle();
         const int64_t currentUniqueId = ec->currentUniqueId();
+
+        /*******debug output*********/
+        if (isReplicatedTable()) {
+            if (ec->m_debugReplicatedOpenSeqNum != -1) {
+                if ((drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
+                    VOLT_ERROR("<DR_RECORD_TRUNCATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                            "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
+                            (intmax_t)currentUniqueId,
+                            (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
+                            (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
+                            (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            ec->m_partitionId);
+                }
+            }
+        } else {
+            if (ec->m_debugOpenSeqNum != -1) {
+                if ((drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+                    VOLT_ERROR("<DR_RECORD_TRUNCATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                            "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
+                            (intmax_t)currentUniqueId,
+                            (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
+                            (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
+                            (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            ec->m_partitionId);
+                }
+            }
+        }
+        /****************/
+
         drMark = drStream->truncateTable(lastCommittedSpHandle, m_signature, m_name, currentTxnId, currentSpHandle, currentUniqueId);
     }
 
@@ -531,6 +564,40 @@ void PersistentTable::insertTupleCommon(TableTuple &source, TableTuple &target, 
         const int64_t currentSpHandle = ec->currentSpHandle();
         const int64_t currentUniqueId = ec->currentUniqueId();
         std::pair<const TableIndex*, uint32_t> uniqueIndex = getUniqueIndexForDR();
+
+        /*******debug output*********/
+        if (isReplicatedTable()) {
+            if (ec->m_debugReplicatedOpenSeqNum != -1) {
+                if ((drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
+                    VOLT_ERROR("<DR_RECORD_INSERT> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                            "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
+                            (intmax_t)currentUniqueId,
+                            (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
+                            (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
+                            (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            ec->m_partitionId);
+                }
+            }
+        } else {
+            if (ec->m_debugOpenSeqNum != -1) {
+                if ((drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+                    VOLT_ERROR("<DR_RECORD_INSERT> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                            "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
+                            (intmax_t)currentUniqueId,
+                            (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
+                            (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
+                            (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            ec->m_partitionId);
+                }
+            }
+        }
+
+        /****************/
+
         drMark = drStream->appendTuple(lastCommittedSpHandle, m_signature, currentTxnId, currentSpHandle, currentUniqueId, target, DR_RECORD_INSERT, uniqueIndex);
     }
 
@@ -684,6 +751,39 @@ bool PersistentTable::updateTupleWithSpecificIndexes(TableTuple &targetTupleToUp
         const int64_t currentSpHandle = ec->currentSpHandle();
         const int64_t currentUniqueId = ec->currentUniqueId();
         std::pair<const TableIndex*, uint32_t> uniqueIndex = getUniqueIndexForDR();
+
+        /*******debug output*********/
+        if (isReplicatedTable()) {
+            if (ec->m_debugReplicatedOpenSeqNum != -1) {
+                if ((drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
+                    VOLT_ERROR("<DR_RECORD_UPDATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                            "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
+                            (intmax_t)currentUniqueId,
+                            (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
+                            (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
+                            (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            ec->m_partitionId);
+                }
+            }
+        } else {
+            if (ec->m_debugOpenSeqNum != -1) {
+                if ((drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+                    VOLT_ERROR("<DR_RECORD_UPDATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                            "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
+                            (intmax_t)currentUniqueId,
+                            (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
+                            (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
+                            (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            ec->m_partitionId);
+                }
+            }
+        }
+        /****************/
+
         drMark = drStream->appendUpdateRecord(lastCommittedSpHandle, m_signature, currentTxnId, currentSpHandle, currentUniqueId, targetTupleToUpdate, sourceTupleWithNewValues, uniqueIndex);
     }
 
@@ -848,6 +948,39 @@ bool PersistentTable::deleteTuple(TableTuple &target, bool fallible) {
         const int64_t currentSpHandle = ec->currentSpHandle();
         const int64_t currentUniqueId = ec->currentUniqueId();
         std::pair<const TableIndex*, uint32_t> uniqueIndex = getUniqueIndexForDR();
+
+        /*******debug output*********/
+        if (isReplicatedTable()) {
+            if (ec->m_debugReplicatedOpenSeqNum != -1) {
+                if ((drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
+                    VOLT_ERROR("<DR_RECORD_DELETE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                            "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
+                            (intmax_t)currentUniqueId,
+                            (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
+                            (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
+                            (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            ec->m_partitionId);
+                }
+            }
+        } else {
+            if (ec->m_debugOpenSeqNum != -1) {
+                if ((drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+                    VOLT_ERROR("<DR_RECORD_DELETE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                            "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
+                            (intmax_t)currentUniqueId,
+                            (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
+                            (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
+                            (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            ec->m_partitionId);
+                }
+            }
+        }
+        /****************/
+
         drMark = drStream->appendTuple(lastCommittedSpHandle, m_signature, currentTxnId, currentSpHandle, currentUniqueId, target, DR_RECORD_DELETE, uniqueIndex);
     }
 
