@@ -408,12 +408,13 @@ void PersistentTable::truncateTable(VoltDBEngine* engine, bool fallible) {
                 if ((drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
                     VOLT_ERROR("<DR_RECORD_TRUNCATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
                             (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
                             (intmax_t)currentUniqueId,
                             (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
                             (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
                             (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            drStream->m_enabled ? "true" : "false",
                             ec->m_partitionId);
                 }
             }
@@ -422,16 +423,18 @@ void PersistentTable::truncateTable(VoltDBEngine* engine, bool fallible) {
                 if ((drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
                     VOLT_ERROR("<DR_RECORD_TRUNCATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
                             (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
                             (intmax_t)currentUniqueId,
                             (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
                             (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
                             (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            drStream->m_enabled ? "true" : "false",
                             ec->m_partitionId);
                 }
             }
         }
+
         /****************/
 
         drMark = drStream->truncateTable(lastCommittedSpHandle, m_signature, m_name, currentTxnId, currentSpHandle, currentUniqueId);
@@ -571,12 +574,13 @@ void PersistentTable::insertTupleCommon(TableTuple &source, TableTuple &target, 
                 if ((drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
                     VOLT_ERROR("<DR_RECORD_INSERT> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
                             (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
                             (intmax_t)currentUniqueId,
                             (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
                             (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
                             (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            drStream->m_enabled ? "true" : "false",
                             ec->m_partitionId);
                 }
             }
@@ -585,12 +589,13 @@ void PersistentTable::insertTupleCommon(TableTuple &source, TableTuple &target, 
                 if ((drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
                     VOLT_ERROR("<DR_RECORD_INSERT> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
                             (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
                             (intmax_t)currentUniqueId,
                             (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
                             (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
                             (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            drStream->m_enabled ? "true" : "false",
                             ec->m_partitionId);
                 }
             }
@@ -758,12 +763,13 @@ bool PersistentTable::updateTupleWithSpecificIndexes(TableTuple &targetTupleToUp
                 if ((drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
                     VOLT_ERROR("<DR_RECORD_UPDATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
                             (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
                             (intmax_t)currentUniqueId,
                             (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
                             (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
                             (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            drStream->m_enabled ? "true" : "false",
                             ec->m_partitionId);
                 }
             }
@@ -772,16 +778,18 @@ bool PersistentTable::updateTupleWithSpecificIndexes(TableTuple &targetTupleToUp
                 if ((drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
                     VOLT_ERROR("<DR_RECORD_UPDATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
                             (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
                             (intmax_t)currentUniqueId,
                             (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
                             (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
                             (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            drStream->m_enabled ? "true" : "false",
                             ec->m_partitionId);
                 }
             }
         }
+
         /****************/
 
         drMark = drStream->appendUpdateRecord(lastCommittedSpHandle, m_signature, currentTxnId, currentSpHandle, currentUniqueId, targetTupleToUpdate, sourceTupleWithNewValues, uniqueIndex);
@@ -955,12 +963,13 @@ bool PersistentTable::deleteTuple(TableTuple &target, bool fallible) {
                 if ((drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
                     VOLT_ERROR("<DR_RECORD_DELETE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
                             (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
                             (intmax_t)currentUniqueId,
                             (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
                             (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
                             (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            drStream->m_enabled ? "true" : "false",
                             ec->m_partitionId);
                 }
             }
@@ -969,16 +978,18 @@ bool PersistentTable::deleteTuple(TableTuple &target, bool fallible) {
                 if ((drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
                     VOLT_ERROR("<DR_RECORD_DELETE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                            "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
                             (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)currentTxnId,
                             (intmax_t)currentUniqueId,
                             (intmax_t)drStream->m_uso, (intmax_t)drStream->m_committedUso,
                             (intmax_t)drStream->m_openSpHandle, (intmax_t)drStream->m_committedSpHandle,
                             (intmax_t)drStream->m_openSequenceNumber, (intmax_t)drStream->m_committedSequenceNumber,
+                            drStream->m_enabled ? "true" : "false",
                             ec->m_partitionId);
                 }
             }
         }
+
         /****************/
 
         drMark = drStream->appendTuple(lastCommittedSpHandle, m_signature, currentTxnId, currentSpHandle, currentUniqueId, target, DR_RECORD_DELETE, uniqueIndex);
