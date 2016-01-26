@@ -136,6 +136,83 @@ Table* ExecutorContext::executeExecutors(int subqueryId)
     return executeExecutors(executorList, subqueryId);
 }
 
+// helper to configure the context for a new jni call
+void ExecutorContext::setupForPlanFragments(UndoQuantum *undoQuantum,
+                           int64_t txnId,
+                           int64_t spHandle,
+                           int64_t lastCommittedSpHandle,
+                           int64_t uniqueId)
+{
+    /*******debug output*********/
+    if (m_debugOpenSeqNum != -1) {
+        if (drStream()->m_enabled && (drStream()->m_openSequenceNumber - m_debugOpenSeqNum) < 10) {
+            VOLT_ERROR("setupForPlanFragments() \n"
+                    "lastCommittedSpHandle=%jd, spHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                    "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                    "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
+                    (intmax_t)lastCommittedSpHandle, (intmax_t)spHandle, (intmax_t)txnId, (intmax_t)uniqueId,
+                    (intmax_t)drStream()->m_uso, (intmax_t)drStream()->m_committedUso,
+                    (intmax_t)drStream()->m_openSpHandle, (intmax_t)drStream()->m_committedSpHandle,
+                    (intmax_t)drStream()->m_openSequenceNumber, (intmax_t)drStream()->m_committedSequenceNumber,
+                    drStream()->m_enabled ? "true" : "false",
+                    m_partitionId);
+        }
+    }
+    /****************/
+    m_undoQuantum = undoQuantum;
+    m_spHandle = spHandle;
+    m_txnId = txnId;
+    m_lastCommittedSpHandle = lastCommittedSpHandle;
+    m_uniqueId = uniqueId;
+    m_currentTxnTimestamp = (m_uniqueId >> 23) + VOLT_EPOCH;
+    m_currentDRTimestamp = createDRTimestampHiddenValue(static_cast<int64_t>(m_drClusterId), m_uniqueId);
+}
+
+// data available via tick()
+void ExecutorContext::setupForTick(int64_t lastCommittedSpHandle)
+{
+   /*******debug output*********/
+   if (m_debugOpenSeqNum != -1) {
+       if (drStream()->m_enabled && (drStream()->m_openSequenceNumber - m_debugOpenSeqNum) < 10) {
+           VOLT_ERROR("setupForTick() \n"
+                   "lastCommittedSpHandle=%jd  ExecutorContext::m_spHandle=%jd\n"
+                   "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                   "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
+                   (intmax_t)lastCommittedSpHandle, (intmax_t)m_spHandle,
+                   (intmax_t)drStream()->m_uso, (intmax_t)drStream()->m_committedUso,
+                   (intmax_t)drStream()->m_openSpHandle, (intmax_t)drStream()->m_committedSpHandle,
+                   (intmax_t)drStream()->m_openSequenceNumber, (intmax_t)drStream()->m_committedSequenceNumber,
+                   drStream()->m_enabled ? "true" : "false",
+                   m_partitionId);
+       }
+   }
+   /****************/
+    m_lastCommittedSpHandle = lastCommittedSpHandle;
+    m_spHandle = std::max(m_spHandle, lastCommittedSpHandle);
+}
+
+// data available via quiesce()
+void ExecutorContext::setupForQuiesce(int64_t lastCommittedSpHandle) {
+    /*******debug output*********/
+    if (m_debugOpenSeqNum != -1) {
+        if (drStream()->m_enabled && (drStream()->m_openSequenceNumber - m_debugOpenSeqNum) < 10) {
+            VOLT_ERROR("setupForQuiesce() \n"
+                    "lastCommittedSpHandle=%jd, ExecutorContext::m_spHandle=%jd\n"
+                    "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                    "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
+                    (intmax_t)lastCommittedSpHandle, (intmax_t)m_spHandle,
+                    (intmax_t)drStream()->m_uso, (intmax_t)drStream()->m_committedUso,
+                    (intmax_t)drStream()->m_openSpHandle, (intmax_t)drStream()->m_committedSpHandle,
+                    (intmax_t)drStream()->m_openSequenceNumber, (intmax_t)drStream()->m_committedSequenceNumber,
+                    drStream()->m_enabled ? "true" : "false",
+                    m_partitionId);
+        }
+    }
+    /****************/
+    m_lastCommittedSpHandle = lastCommittedSpHandle;
+    m_spHandle = std::max(lastCommittedSpHandle, m_spHandle);
+}
+
 Table* ExecutorContext::executeExecutors(const std::vector<AbstractExecutor*>& executorList,
                                          int subqueryId)
 {

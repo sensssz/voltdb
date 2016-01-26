@@ -76,29 +76,13 @@ class ExecutorContext {
                                int64_t txnId,
                                int64_t spHandle,
                                int64_t lastCommittedSpHandle,
-                               int64_t uniqueId)
-    {
-        m_undoQuantum = undoQuantum;
-        m_spHandle = spHandle;
-        m_txnId = txnId;
-        m_lastCommittedSpHandle = lastCommittedSpHandle;
-        m_uniqueId = uniqueId;
-        m_currentTxnTimestamp = (m_uniqueId >> 23) + VOLT_EPOCH;
-        m_currentDRTimestamp = createDRTimestampHiddenValue(static_cast<int64_t>(m_drClusterId), m_uniqueId);
-    }
+                               int64_t uniqueId);
 
     // data available via tick()
-    void setupForTick(int64_t lastCommittedSpHandle)
-    {
-        m_lastCommittedSpHandle = lastCommittedSpHandle;
-        m_spHandle = std::max(m_spHandle, lastCommittedSpHandle);
-    }
+    void setupForTick(int64_t lastCommittedSpHandle);
 
     // data available via quiesce()
-    void setupForQuiesce(int64_t lastCommittedSpHandle) {
-        m_lastCommittedSpHandle = lastCommittedSpHandle;
-        m_spHandle = std::max(lastCommittedSpHandle, m_spHandle);
-    }
+    void setupForQuiesce(int64_t lastCommittedSpHandle);
 
     // Used originally for test. Now also used to NULL
     // out the UndoQuantum when it is released to make it possible
