@@ -99,6 +99,22 @@ void TupleStreamBase::cleanupManagedBuffers()
  */
 void TupleStreamBase::commit(int64_t lastCommittedSpHandle, int64_t currentSpHandle, int64_t txnId, int64_t uniqueId, bool sync, bool flush)
 {
+    /*************debug output *************/
+    ExecutorContext *ec = ExecutorContext::getExecutorContext();
+    if (ec->m_debugOpenSeqNum != -1) {
+        if ((m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+            VOLT_ERROR("commit() lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                    "tupleStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                    "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
+                    (intmax_t)lastCommittedSpHandle, (intmax_t)currentSpHandle, (intmax_t)txnId,
+                    (intmax_t)uniqueId,
+                    (intmax_t)m_uso, (intmax_t)m_committedUso,
+                    (intmax_t)m_openSpHandle, (intmax_t)m_committedSpHandle,
+                    (intmax_t)m_openSequenceNumber, (intmax_t)m_committedSequenceNumber,
+                    ec->m_partitionId);
+        }
+    }
+    /*****************************************/
     if (currentSpHandle < m_openSpHandle)
     {
         throwFatalException(
