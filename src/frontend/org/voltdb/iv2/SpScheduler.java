@@ -445,9 +445,11 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
             if (message.isForReplay()) {
                 newSpHandle = message.getTxnId();
                 setMaxSeenTxnId(newSpHandle);
+                /*******debug output ******/
                 tmLog.info("SpScheduler handleIv2InitiateTaskMessage() " + procedureName +
                         " adpoted spHandle " + newSpHandle + "from CL, txnId = " + msg.getTxnId() +
                         " uniqueId = " + message.getUniqueId());
+                /******************/
             } else if (m_isLeader && !message.isReadOnly()) {
                 TxnEgo ego = advanceTxnEgo();
                 newSpHandle = ego.getTxnId();
@@ -751,11 +753,22 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
             if (!message.isReadOnly()) {
                 TxnEgo ego = advanceTxnEgo();
                 newSpHandle = ego.getTxnId();
-                tmLog.info("SpScheduler handleFragmentTaskMessage() " + msg.getProcedureName() +
-                        " advanced spHandle to " + newSpHandle + ", uniqueId = " + msg.getUniqueId() +
-                        " txnId = " + msg.getTxnId() + " msgType = " + msg.getFragmentTaskType());
+                /******* debug output *****/
+                if (message.isForReplay()) {
+                    tmLog.info("SpScheduler handleFragmentTaskMessage() " + msg.getProcedureName() +
+                            " advanced spHandle to " + newSpHandle + ", uniqueId = " + msg.getUniqueId() +
+                            " txnId = " + msg.getTxnId() + " msgType = " + msg.getFragmentTaskType());
+                }
+                /************/
             } else {
                 newSpHandle = getMaxTaskedSpHandle();
+                /******* debug output *****/
+                if (message.isForReplay()) {
+                    tmLog.info("SpScheduler handleFragmentTaskMessage() readOnly " + msg.getProcedureName() +
+                            " adpoted the max tasked spHandle " + newSpHandle + ", uniqueId = " + msg.getUniqueId() +
+                            " txnId = " + msg.getTxnId() + " msgType = " + msg.getFragmentTaskType());
+                }
+                /************/
             }
 
             msg.setSpHandle(newSpHandle);
