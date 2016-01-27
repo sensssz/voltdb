@@ -886,9 +886,49 @@ PersistentTableSurgeon::DRRollback(size_t drMark, size_t drRowCost) {
     if (!m_table.m_isMaterialized && m_table.m_drEnabled) {
         if (m_table.m_partitionColumn == -1) {
             if (ExecutorContext::getExecutorContext()->drReplicatedStream()) {
+                /***********debug output ************/
+                ExecutorContext *ec = ExecutorContext::getExecutorContext();
+                if (ec->m_debugOpenSeqNum != -1) {
+                    if ((ec->drStream()->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
+                        VOLT_ERROR("DRRollback()\n"
+                                "drMark %jd\n"
+                                "drReplicatedStream: current USO %jd, committed USO %jd, "
+                                 "open spHandle %jd, committed spHandle %jd, "
+                                 "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+                                 (intmax_t)drMark,
+                                 (intmax_t)ec->drStream()->m_uso,
+                                 (intmax_t)ec->drStream()->m_committedUso,
+                                 (intmax_t)ec->drStream()->m_openSpHandle,
+                                 (intmax_t)ec->drStream()->m_committedSpHandle,
+                                 (intmax_t)ec->drStream()->m_openSequenceNumber,
+                                 (intmax_t)ec->drStream()->m_committedSequenceNumber,
+                                 (intmax_t)ec->m_partitionId);
+                    }
+                }
+                 /***********************/
                 ExecutorContext::getExecutorContext()->drReplicatedStream()->rollbackTo(drMark, drRowCost);
             }
         } else {
+            /***********debug output ************/
+            ExecutorContext *ec = ExecutorContext::getExecutorContext();
+            if (ec->m_debugOpenSeqNum != -1) {
+                if ((ec->drStream()->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
+                    VOLT_ERROR("DRRollback()\n"
+                            "drMark %jd\n"
+                            "drStream: current USO %jd, committed USO %jd, "
+                             "open spHandle %jd, committed spHandle %jd, "
+                             "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+                             (intmax_t)drMark,
+                             (intmax_t)ec->drStream()->m_uso,
+                             (intmax_t)ec->drStream()->m_committedUso,
+                             (intmax_t)ec->drStream()->m_openSpHandle,
+                             (intmax_t)ec->drStream()->m_committedSpHandle,
+                             (intmax_t)ec->drStream()->m_openSequenceNumber,
+                             (intmax_t)ec->drStream()->m_committedSequenceNumber,
+                             (intmax_t)ec->m_partitionId);
+                }
+            }
+             /***********************/
             ExecutorContext::getExecutorContext()->drStream()->rollbackTo(drMark, drRowCost);
         }
     }

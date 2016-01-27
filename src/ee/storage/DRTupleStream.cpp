@@ -311,6 +311,24 @@ size_t DRTupleStream::computeOffsets(DRRecordType &type,
 void DRTupleStream::beginTransaction(int64_t sequenceNumber, int64_t uniqueId) {
     assert(!m_opened);
 
+    /***********debug output ************/
+    ExecutorContext *ec = ExecutorContext::getExecutorContext();
+    if (ec->m_debugOpenSeqNum != -1) {
+        if ((m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
+            VOLT_ERROR("beginTransaction()\n"
+                    "sequenceNumber %jd, uniqueId %jd\n"
+                    "drStream: current USO %jd, committed USO %jd, "
+                     "open spHandle %jd, committed spHandle %jd, "
+                     "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+                     (intmax_t)sequenceNumber, (intmax_t)uniqueId,
+                     (intmax_t)m_uso, (intmax_t)m_committedUso,
+                     (intmax_t)m_openSpHandle, (intmax_t)m_committedSpHandle,
+                     (intmax_t)m_openSequenceNumber, (intmax_t)m_committedSequenceNumber,
+                     (intmax_t)this->m_partitionId);
+        }
+    }
+     /***********************/
+
     if (!m_currBlock) {
          extendBufferChain(m_defaultCapacity);
      }
@@ -352,19 +370,30 @@ void DRTupleStream::beginTransaction(int64_t sequenceNumber, int64_t uniqueId) {
 
      m_opened = true;
 
-//     VOLT_ERROR("At beginTransaction(),  current USO %jd, committed USO %jd, "
-//                 "open spHandle %jd, committed spHandle %jd, "
-//                 "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
-//                 (intmax_t)m_uso, (intmax_t)m_committedUso,
-//                 (intmax_t)m_openSpHandle, (intmax_t)m_committedSpHandle,
-//                 (intmax_t)m_openSequenceNumber, (intmax_t)m_committedSequenceNumber,
-//                 (intmax_t)this->m_partitionId);
 }
 
 void DRTupleStream::endTransaction(int64_t uniqueId) {
     if (!m_opened) {
         return;
     }
+
+    /***********debug output ************/
+    ExecutorContext *ec = ExecutorContext::getExecutorContext();
+    if (ec->m_debugOpenSeqNum != -1) {
+        if ((m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
+            VOLT_ERROR("endTransaction()\n"
+                    "uniqueId %jd\n"
+                    "drStream: current USO %jd, committed USO %jd, "
+                     "open spHandle %jd, committed spHandle %jd, "
+                     "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
+                     (intmax_t)uniqueId,
+                     (intmax_t)m_uso, (intmax_t)m_committedUso,
+                     (intmax_t)m_openSpHandle, (intmax_t)m_committedSpHandle,
+                     (intmax_t)m_openSequenceNumber, (intmax_t)m_committedSequenceNumber,
+                     (intmax_t)this->m_partitionId);
+        }
+    }
+    /***********************/
 
     if (!m_currBlock) {
         extendBufferChain(m_defaultCapacity);
@@ -427,14 +456,6 @@ void DRTupleStream::endTransaction(int64_t uniqueId) {
         extendBufferChain(0);
     }
     m_txnRowCount = 0;
-
-//    VOLT_ERROR("At endTransaction(),  current USO %jd, committed USO %jd, "
-//            "open spHandle %jd, committed spHandle %jd, "
-//            "open sequence number %jd, committed sequence number %jd, from partition %jd\n",
-//            (intmax_t)m_uso, (intmax_t)m_committedUso,
-//            (intmax_t)m_openSpHandle, (intmax_t)m_committedSpHandle,
-//            (intmax_t)m_openSequenceNumber, (intmax_t)m_committedSequenceNumber,
-//            (intmax_t)this->m_partitionId);
 }
 
 // If partial transaction is going to span multiple buffer, first time move it to

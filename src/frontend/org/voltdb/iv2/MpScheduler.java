@@ -242,6 +242,9 @@ public class MpScheduler extends Scheduler
         if (message.isForReplay()) {
             mpTxnId = message.getTxnId();
             setMaxSeenTxnId(mpTxnId);
+            tmLog.info("MpScheduler handleIv2InitiateTaskMessage() " + procedureName + " adopted spHandle "
+                    + mpTxnId + "from command log, uniqueId = " + message.getUniqueId()
+                    + " txnId = " + message.getTxnId() );
         } else {
             TxnEgo ego = advanceTxnEgo();
             mpTxnId = ego.getTxnId();
