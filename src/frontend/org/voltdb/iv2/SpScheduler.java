@@ -447,8 +447,9 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
                 setMaxSeenTxnId(newSpHandle);
                 /*******debug output ******/
                 tmLog.info("SpScheduler handleIv2InitiateTaskMessage() " + procedureName +
-                        " adpoted spHandle " + newSpHandle + "from CL, txnId = " + msg.getTxnId() +
-                        " uniqueId = " + message.getUniqueId());
+                        " adpoted spHandle " + newSpHandle + " from command log, txnId = " + msg.getTxnId() +
+                        " uniqueId = " + message.getUniqueId() +
+                        ", from parition " + TxnEgo.getPartitionId(newSpHandle));
                 /******************/
             } else if (m_isLeader && !message.isReadOnly()) {
                 TxnEgo ego = advanceTxnEgo();
@@ -757,7 +758,8 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
                 if (message.isForReplay()) {
                     tmLog.info("SpScheduler handleFragmentTaskMessage() " + msg.getProcedureName() +
                             " advanced spHandle to " + newSpHandle + ", uniqueId = " + msg.getUniqueId() +
-                            " txnId = " + msg.getTxnId() + " msgType = " + msg.getFragmentTaskType());
+                            " txnId = " + msg.getTxnId() + " msgType = " + msg.getFragmentTaskType() +
+                            ", from parition " + TxnEgo.getPartitionId(newSpHandle));
                 }
                 /************/
             } else {
@@ -766,7 +768,8 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
                 if (message.isForReplay()) {
                     tmLog.info("SpScheduler handleFragmentTaskMessage() readOnly " + msg.getProcedureName() +
                             " adpoted the max tasked spHandle " + newSpHandle + ", uniqueId = " + msg.getUniqueId() +
-                            " txnId = " + msg.getTxnId() + " msgType = " + msg.getFragmentTaskType());
+                            " txnId = " + msg.getTxnId() + " msgType = " + msg.getFragmentTaskType() +
+                            ", from parition " + TxnEgo.getPartitionId(newSpHandle));
                 }
                 /************/
             }
