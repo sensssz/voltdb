@@ -711,6 +711,16 @@ int64_t BinaryLogSink::apply(ReferenceSerializeInputLE *taskInfo, boost::unorder
             }
         }
         *sequenceNumber = tempSequenceNumber;
+        /*******debug output*********/
+        ExecutorContext *ec = ExecutorContext::getExecutorContext();
+        if (ec->m_debugOpenSeqNum != -1) {
+            if ((ec->drStream()->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
+                VOLT_ERROR("applyBinaryLog() applying DR_RECORD_BEGIN_TXN\n"
+                        "uniqueId=%jd, sequenceNumber=%jd, from parition %d\n",
+                        (intmax_t)*uniqueId, (intmax_t)*sequenceNumber,ec->m_partitionId);
+            }
+        }
+        /****************/
         uint32_t checksum = taskInfo->readInt();
         validateChecksum(checksum, recordStart, taskInfo->getRawPointer());
         break;
@@ -721,6 +731,16 @@ int64_t BinaryLogSink::apply(ReferenceSerializeInputLE *taskInfo, boost::unorder
             throwFatalException("Closing the wrong transaction inside a binary log segment. Expected %jd but found %jd",
                                 (intmax_t)*sequenceNumber, (intmax_t)tempSequenceNumber);
         }
+        /*******debug output*********/
+        ExecutorContext *ec = ExecutorContext::getExecutorContext();
+        if (ec->m_debugOpenSeqNum != -1) {
+            if ((ec->drStream()->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
+                VOLT_ERROR("applyBinaryLog() applying DR_RECORD_END_TXN\n"
+                        "uniqueId=%jd, sequenceNumber=%jd, from parition %d\n",
+                        (intmax_t)*uniqueId, (intmax_t)*sequenceNumber,ec->m_partitionId);
+            }
+        }
+        /****************/
         uint32_t checksum = taskInfo->readInt();
         validateChecksum(checksum, recordStart, taskInfo->getRawPointer());
         break;

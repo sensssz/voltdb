@@ -405,7 +405,7 @@ void PersistentTable::truncateTable(VoltDBEngine* engine, bool fallible) {
         /*******debug output*********/
         if (isReplicatedTable()) {
             if (ec->m_debugReplicatedOpenSeqNum != -1) {
-                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
+                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 20) {
                     VOLT_ERROR("<DR_RECORD_TRUNCATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                             "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
@@ -420,7 +420,7 @@ void PersistentTable::truncateTable(VoltDBEngine* engine, bool fallible) {
             }
         } else {
             if (ec->m_debugOpenSeqNum != -1) {
-                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
                     VOLT_ERROR("<DR_RECORD_TRUNCATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                             "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
@@ -571,7 +571,7 @@ void PersistentTable::insertTupleCommon(TableTuple &source, TableTuple &target, 
         /*******debug output*********/
         if (isReplicatedTable()) {
             if (ec->m_debugReplicatedOpenSeqNum != -1) {
-                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
+                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 20) {
                     VOLT_ERROR("<DR_RECORD_INSERT> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                             "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
@@ -586,7 +586,7 @@ void PersistentTable::insertTupleCommon(TableTuple &source, TableTuple &target, 
             }
         } else {
             if (ec->m_debugOpenSeqNum != -1) {
-                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
                     VOLT_ERROR("<DR_RECORD_INSERT> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                             "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
@@ -760,7 +760,7 @@ bool PersistentTable::updateTupleWithSpecificIndexes(TableTuple &targetTupleToUp
         /*******debug output*********/
         if (isReplicatedTable()) {
             if (ec->m_debugReplicatedOpenSeqNum != -1) {
-                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
+                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 20) {
                     VOLT_ERROR("<DR_RECORD_UPDATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                             "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
@@ -775,7 +775,7 @@ bool PersistentTable::updateTupleWithSpecificIndexes(TableTuple &targetTupleToUp
             }
         } else {
             if (ec->m_debugOpenSeqNum != -1) {
-                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
                     VOLT_ERROR("<DR_RECORD_UPDATE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                             "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
@@ -960,7 +960,7 @@ bool PersistentTable::deleteTuple(TableTuple &target, bool fallible) {
         /*******debug output*********/
         if (isReplicatedTable()) {
             if (ec->m_debugReplicatedOpenSeqNum != -1) {
-                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 10) {
+                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugReplicatedOpenSeqNum) < 20) {
                     VOLT_ERROR("<DR_RECORD_DELETE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drReplicatedStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                             "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
@@ -975,7 +975,7 @@ bool PersistentTable::deleteTuple(TableTuple &target, bool fallible) {
             }
         } else {
             if (ec->m_debugOpenSeqNum != -1) {
-                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+                if (drStream->m_enabled && (drStream->m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
                     VOLT_ERROR("<DR_RECORD_DELETE> lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                             "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                             "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",

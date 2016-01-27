@@ -433,6 +433,26 @@ int VoltDBEngine::executePlanFragment(int64_t planfragmentId,
     m_numResultDependencies = 0;
     size_t numResultDependenciesCountOffset = m_resultOutput.reserveBytes(4);
 
+    /*******debug output*********/
+    if (m_executorContext->m_debugOpenSeqNum != -1) {
+        if ((m_executorContext->drStream()->m_openSequenceNumber - m_executorContext->m_debugOpenSeqNum) < 20) {
+            VOLT_ERROR("executePlanFragment() \n"
+                    "lastCommittedSpHandle=%jd, spHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                    "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                    "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
+                    (intmax_t)lastCommittedSpHandle, (intmax_t)spHandle, (intmax_t)txnId, (intmax_t)uniqueId,
+                    (intmax_t)m_executorContext->drStream()->m_uso,
+                    (intmax_t)m_executorContext->drStream()->m_committedUso,
+                    (intmax_t)m_executorContext->drStream()->m_openSpHandle,
+                    (intmax_t)m_executorContext->drStream()->m_committedSpHandle,
+                    (intmax_t)m_executorContext->drStream()->m_openSequenceNumber,
+                    (intmax_t)m_executorContext->drStream()->m_committedSequenceNumber,
+                    m_executorContext->drStream()->m_enabled ? "true" : "false",
+                    m_executorContext->m_partitionId);
+        }
+    }
+    /****************/
+
     // configure the execution context.
     m_executorContext->setupForPlanFragments(getCurrentUndoQuantum(),
                                              txnId,
@@ -1021,6 +1041,25 @@ VoltDBEngine::loadTable(int32_t tableId,
                         bool returnUniqueViolations,
                         bool shouldDRStream)
 {
+    /*******debug output*********/
+    if (m_executorContext->m_debugOpenSeqNum != -1) {
+        if ((m_executorContext->drStream()->m_openSequenceNumber - m_executorContext->m_debugOpenSeqNum) < 20) {
+            VOLT_ERROR("loadTable() \n"
+                    "lastCommittedSpHandle=%jd, spHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                    "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                    "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
+                    (intmax_t)lastCommittedSpHandle, (intmax_t)spHandle, (intmax_t)txnId, (intmax_t)uniqueId,
+                    (intmax_t)m_executorContext->drStream()->m_uso,
+                    (intmax_t)m_executorContext->drStream()->m_committedUso,
+                    (intmax_t)m_executorContext->drStream()->m_openSpHandle,
+                    (intmax_t)m_executorContext->drStream()->m_committedSpHandle,
+                    (intmax_t)m_executorContext->drStream()->m_openSequenceNumber,
+                    (intmax_t)m_executorContext->drStream()->m_committedSequenceNumber,
+                    m_executorContext->drStream()->m_enabled ? "true" : "false",
+                    m_executorContext->m_partitionId);
+        }
+    }
+    /****************/
     //Not going to thread the unique id through.
     //The spHandle and lastCommittedSpHandle aren't really used in load table
     //since their only purpose as of writing this (1/2013) they are only used
@@ -1719,6 +1758,25 @@ int64_t VoltDBEngine::applyBinaryLog(int64_t txnId,
                                   const char *log) {
     DRTupleStreamDisableGuard guard(m_executorContext, !m_database->isActiveActiveDRed());
     setUndoToken(undoToken);
+    /*******debug output*********/
+    if (m_executorContext->m_debugOpenSeqNum != -1) {
+        if ((m_executorContext->drStream()->m_openSequenceNumber - m_executorContext->m_debugOpenSeqNum) < 20) {
+            VOLT_ERROR("applyBinaryLog() \n"
+                    "lastCommittedSpHandle=%jd, spHandle=%jd, txnId=%jd, uniqueId=%jd\n"
+                    "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
+                    "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
+                    (intmax_t)lastCommittedSpHandle, (intmax_t)spHandle, (intmax_t)txnId, (intmax_t)uniqueId,
+                    (intmax_t)m_executorContext->drStream()->m_uso,
+                    (intmax_t)m_executorContext->drStream()->m_committedUso,
+                    (intmax_t)m_executorContext->drStream()->m_openSpHandle,
+                    (intmax_t)m_executorContext->drStream()->m_committedSpHandle,
+                    (intmax_t)m_executorContext->drStream()->m_openSequenceNumber,
+                    (intmax_t)m_executorContext->drStream()->m_committedSequenceNumber,
+                    m_executorContext->drStream()->m_enabled ? "true" : "false",
+                    m_executorContext->m_partitionId);
+        }
+    }
+    /****************/
     m_executorContext->setupForPlanFragments(getCurrentUndoQuantum(),
                                              txnId,
                                              spHandle,

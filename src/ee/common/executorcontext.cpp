@@ -143,22 +143,6 @@ void ExecutorContext::setupForPlanFragments(UndoQuantum *undoQuantum,
                            int64_t lastCommittedSpHandle,
                            int64_t uniqueId)
 {
-    /*******debug output*********/
-    if (m_debugOpenSeqNum != -1) {
-        if (drStream()->m_enabled && (drStream()->m_openSequenceNumber - m_debugOpenSeqNum) < 10) {
-            VOLT_ERROR("setupForPlanFragments() \n"
-                    "lastCommittedSpHandle=%jd, spHandle=%jd, txnId=%jd, uniqueId=%jd\n"
-                    "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
-                    "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, m_enabled %s, from parition %d\n",
-                    (intmax_t)lastCommittedSpHandle, (intmax_t)spHandle, (intmax_t)txnId, (intmax_t)uniqueId,
-                    (intmax_t)drStream()->m_uso, (intmax_t)drStream()->m_committedUso,
-                    (intmax_t)drStream()->m_openSpHandle, (intmax_t)drStream()->m_committedSpHandle,
-                    (intmax_t)drStream()->m_openSequenceNumber, (intmax_t)drStream()->m_committedSequenceNumber,
-                    drStream()->m_enabled ? "true" : "false",
-                    m_partitionId);
-        }
-    }
-    /****************/
     m_undoQuantum = undoQuantum;
     m_spHandle = spHandle;
     m_txnId = txnId;
@@ -173,7 +157,7 @@ void ExecutorContext::setupForTick(int64_t lastCommittedSpHandle)
 {
    /*******debug output*********/
    if (m_debugOpenSeqNum != -1) {
-       if (drStream()->m_enabled && (drStream()->m_openSequenceNumber - m_debugOpenSeqNum) < 10) {
+       if (drStream()->m_enabled && (drStream()->m_openSequenceNumber - m_debugOpenSeqNum) < 20) {
            VOLT_ERROR("setupForTick() \n"
                    "lastCommittedSpHandle=%jd  ExecutorContext::m_spHandle=%jd\n"
                    "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
@@ -195,7 +179,7 @@ void ExecutorContext::setupForTick(int64_t lastCommittedSpHandle)
 void ExecutorContext::setupForQuiesce(int64_t lastCommittedSpHandle) {
     /*******debug output*********/
     if (m_debugOpenSeqNum != -1) {
-        if (drStream()->m_enabled && (drStream()->m_openSequenceNumber - m_debugOpenSeqNum) < 10) {
+        if (drStream()->m_enabled && (drStream()->m_openSequenceNumber - m_debugOpenSeqNum) < 20) {
             VOLT_ERROR("setupForQuiesce() \n"
                     "lastCommittedSpHandle=%jd, ExecutorContext::m_spHandle=%jd\n"
                     "drStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "

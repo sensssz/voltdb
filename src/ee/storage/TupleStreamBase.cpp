@@ -102,7 +102,7 @@ void TupleStreamBase::commit(int64_t lastCommittedSpHandle, int64_t currentSpHan
     /*************debug output *************/
     ExecutorContext *ec = ExecutorContext::getExecutorContext();
     if (ec->m_debugOpenSeqNum != -1) {
-        if ((m_openSequenceNumber - ec->m_debugOpenSeqNum) < 10) {
+        if ((m_openSequenceNumber - ec->m_debugOpenSeqNum) < 20) {
             VOLT_ERROR("commit() lastCommittedSpHandle=%jd, currentSpHandle=%jd, txnId=%jd, uniqueId=%jd\n"
                     "tupleStream: m_uso %jd, m_committedUso %jd, m_openSpHandle %jd, m_committedSpHandle %jd, "
                     "m_openSequenceNumber %jd, m_committedSequenceNumber %jd, from parition %d\n",
