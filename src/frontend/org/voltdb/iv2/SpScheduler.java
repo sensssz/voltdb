@@ -450,6 +450,7 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
                         " adpoted spHandle " + newSpHandle + " from command log, txnId = " + msg.getTxnId() +
                         " uniqueId = " + message.getUniqueId() +
                         ", from parition " + TxnEgo.getPartitionId(newSpHandle));
+                m_replaySequencer.dump(msg.getInitiatorHSId());
                 /******************/
             } else if (m_isLeader && !message.isReadOnly()) {
                 TxnEgo ego = advanceTxnEgo();

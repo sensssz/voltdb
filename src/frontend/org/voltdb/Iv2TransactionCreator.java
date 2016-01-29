@@ -17,6 +17,7 @@
 
 package org.voltdb;
 
+import org.voltcore.logging.VoltLogger;
 import org.voltcore.network.Connection;
 import org.voltdb.dtxn.TransactionCreator;
 
@@ -26,6 +27,7 @@ import org.voltdb.dtxn.TransactionCreator;
  */
 public class Iv2TransactionCreator implements TransactionCreator
 {
+    static final VoltLogger tmLog = new VoltLogger("TM");
     private final ClientInterface m_ci;
 
     Iv2TransactionCreator(ClientInterface ci)

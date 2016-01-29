@@ -615,6 +615,9 @@ class __attribute__((visibility("default"))) VoltDBEngine {
          * most deeply nested executing plan fragment.
          */
         std::stack<int64_t> m_tuplesModifiedStack;
+
+        int64_t m_lastAccessedSpHandle;
+        int64_t m_lastAccessedTxnId;
 };
 
 inline void VoltDBEngine::resetReusedResultOutputBuffer(const size_t headerSize)
