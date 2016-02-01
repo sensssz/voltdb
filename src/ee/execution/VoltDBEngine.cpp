@@ -347,15 +347,15 @@ int VoltDBEngine::executePlanFragments(int32_t numFragments,
                                        int64_t uniqueId,
                                        int64_t undoToken)
 {
-    if (spHandle != std::numeric_limits<int64_t>::min() && spHandle <= m_lastAccessedSpHandle && txnId != 0 &&
-            txnId != m_lastAccessedTxnId) {
-        throwFatalException("Boom boom boom!!! spHandle goes backward, last accessed spHandle %jd, current spHandle %jd"
-                "last accessed txnId %jd, current txnId %jd\n",
-                (intmax_t)m_lastAccessedSpHandle, (intmax_t)spHandle, (intmax_t)m_lastAccessedTxnId, (intmax_t)txnId);
-    }
-
-    m_lastAccessedSpHandle = spHandle;
-    m_lastAccessedTxnId = txnId;
+//    if (spHandle != std::numeric_limits<int64_t>::min() && spHandle <= m_lastAccessedSpHandle && txnId != 0 &&
+//            txnId != m_lastAccessedTxnId) {
+//        throwFatalException("Boom boom boom!!! spHandle goes backward, last accessed spHandle %jd, current spHandle %jd"
+//                "last accessed txnId %jd, current txnId %jd\n",
+//                (intmax_t)m_lastAccessedSpHandle, (intmax_t)spHandle, (intmax_t)m_lastAccessedTxnId, (intmax_t)txnId);
+//    }
+//
+//    m_lastAccessedSpHandle = spHandle;
+//    m_lastAccessedTxnId = txnId;
 
     // count failures
     int failures = 0;
