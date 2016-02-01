@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2015 VoltDB Inc.
+ * Copyright (C) 2008-2016 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -35,7 +35,7 @@
 #include "common/NValue.hpp"
 #include "common/ValueFactory.hpp"
 #include "common/tabletuple.h"
-#include "storage/BinaryLogSink.h"
+#include "storage/BinaryLogSinkWrapper.h"
 #include "storage/persistenttable.h"
 #include "storage/streamedtable.h"
 #include "storage/tableiterator.h"
@@ -195,6 +195,7 @@ public:
         std::vector<bool> otherColumnAllowNull(2, false);
         otherColumnTypes.push_back(VALUE_TYPE_TINYINT); otherColumnLengths.push_back(NValue::getTupleStorageSize(VALUE_TYPE_TINYINT));
         otherColumnTypes.push_back(VALUE_TYPE_BIGINT);  otherColumnLengths.push_back(NValue::getTupleStorageSize(VALUE_TYPE_BIGINT));
+        otherColumnAllowNull[1] = true;
 
         m_otherSchemaWithIndex = TupleSchema::createTupleSchemaForTest(otherColumnTypes, otherColumnLengths, otherColumnAllowNull);
         m_otherSchemaWithoutIndex = TupleSchema::createTupleSchemaForTest(otherColumnTypes, otherColumnLengths, otherColumnAllowNull);
@@ -209,7 +210,9 @@ public:
         m_otherTableWithIndexReplica = reinterpret_cast<PersistentTable*>(voltdb::TableFactory::getPersistentTable(0, "OTHER_TABLE_1", m_otherSchemaWithIndexReplica, otherColumnNames, otherTableHandleWithIndex, false, 0));
         m_otherTableWithoutIndexReplica = reinterpret_cast<PersistentTable*>(voltdb::TableFactory::getPersistentTable(0, "OTHER_TABLE_2", m_otherSchemaWithoutIndexReplica, otherColumnNames, otherTableHandleWithoutIndex, false, 0));
 
-        vector<int> columnIndices(1, 0);
+        vector<int> columnIndices;
+        columnIndices.push_back(1);
+        columnIndices.push_back(0);
         TableIndexScheme scheme = TableIndexScheme("the_index", HASH_TABLE_INDEX,
                                                    columnIndices, TableIndex::simplyIndexColumns(),
                                                    true, true, m_otherSchemaWithIndex);
@@ -392,7 +395,7 @@ public:
             *reinterpret_cast<int32_t*>(&data.get()[startPos]) = htonl(static_cast<int32_t>(sb->offset()));
             m_drStream.m_enabled = false;
             m_drReplicatedStream.m_enabled = false;
-            m_sink.apply(&data[startPos], tables, &m_pool, m_engineReplica, 1);
+            m_sinkWrapper.apply(&data[startPos], tables, &m_pool, m_engineReplica, 1);
             m_drStream.m_enabled = true;
             m_drReplicatedStream.m_enabled = true;
         }
@@ -645,7 +648,7 @@ protected:
 
     DummyTopend m_topend;
     Pool m_pool;
-    BinaryLogSink m_sink;
+    BinaryLogSinkWrapper m_sinkWrapper;
     MockVoltDBEngine* m_engine;
     MockVoltDBEngine* m_engineReplica;
     char tableHandle[20];
@@ -1043,6 +1046,32 @@ TEST_F(DRBinaryLogTest, DeleteWithUniqueIndexMultipleTables) {
     TableTuple tuple = m_otherTableWithIndexReplica->lookupTupleForDR(fifth_tuple);
     ASSERT_FALSE(tuple.isNullTuple());
     EXPECT_EQ(0, m_otherTableWithoutIndexReplica->activeTupleCount());
+}
+
+TEST_F(DRBinaryLogTest, DeleteWithUniqueIndexNullColumn) {
+    createIndexes();
+
+    std::pair<const TableIndex*, uint32_t> indexPair1 = m_otherTableWithIndex->getUniqueIndexForDR();
+    ASSERT_FALSE(indexPair1.first == NULL);
+
+    beginTxn(m_engine, 99, 99, 98, 70);
+    TableTuple temp_tuple = m_otherTableWithIndex->tempTuple();
+    temp_tuple.setNValue(0, ValueFactory::getTinyIntValue(0));
+    temp_tuple.setNValue(1, NValue::getNullValue(VALUE_TYPE_BIGINT));
+    TableTuple tuple = insertTuple(m_otherTableWithIndex, temp_tuple);
+    endTxn(m_engine, true);
+
+    flushAndApply(99);
+
+    EXPECT_EQ(1, m_otherTableWithIndexReplica->activeTupleCount());
+
+    beginTxn(m_engine, 100, 100, 99, 71);
+    deleteTuple(m_otherTableWithIndex, tuple);
+    endTxn(m_engine, true);
+
+    flushAndApply(100);
+
+    EXPECT_EQ(0, m_otherTableWithIndexReplica->activeTupleCount());
 }
 
 TEST_F(DRBinaryLogTest, DeleteWithUniqueIndexNoninlineVarchar) {
