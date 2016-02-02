@@ -965,6 +965,15 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
             // correctly
             if (!msg.isForReplay()) advanceTxnEgo();
             msg.setSpHandle(getCurrentTxnId());
+            /*******debug output ******/
+            if (msg.isForReplay()) {
+                tmLog.info("SpScheduler handleCompleteTransactionMessage() receive CompleteTxnMsg" +
+                        "  spHandle " + msg.getSpHandle() + " for txnId = " + msg.getTxnId() +
+                        " uniqueId = " + message.getUniqueId() + " isRollBack: " + msg.isRollback()
+                        + " isRestart: " + msg.isRestart() + " requiresAck: " + msg.requiresAck() +
+                        ", from parition " + TxnEgo.getPartitionId(msg.getSpHandle()));
+            }
+            /*************************/
             if (m_sendToHSIds.length > 0) {
                 m_mailbox.send(m_sendToHSIds, msg);
             }

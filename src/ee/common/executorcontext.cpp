@@ -317,8 +317,8 @@ void ExecutorContext::setDrStream(AbstractDRTupleStream *drStream) {
     m_drStream = drStream;
     m_drStream->setLastCommittedSequenceNumber(oldSeqNum);
 
-    m_debugOpenSeqNum = oldSeqNum;
-    m_debugCommittedSeqNum = oldSeqNum;
+//    m_debugOpenSeqNum = oldSeqNum;
+//    m_debugCommittedSeqNum = oldSeqNum;
 
     VOLT_ERROR("After set DR stream, m_opened %s, current USO %jd, committed USO %jd, "
             "open spHandle %jd, committed spHandle %jd, "
@@ -352,8 +352,8 @@ void ExecutorContext::setDrReplicatedStream(AbstractDRTupleStream *drReplicatedS
     m_drReplicatedStream = drReplicatedStream;
     m_drReplicatedStream->setLastCommittedSequenceNumber(oldSeqNum);
 
-    m_debugReplicatedOpenSeqNum = oldSeqNum;
-    m_debugReplicatedCommittedSeqNum = oldSeqNum;
+//    m_debugReplicatedOpenSeqNum = oldSeqNum;
+//    m_debugReplicatedCommittedSeqNum = oldSeqNum;
 
     VOLT_ERROR("After set DR replicated stream, m_opened %s, current USO %jd, committed USO %jd, "
          "open spHandle %jd, committed spHandle %jd, "
