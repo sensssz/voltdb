@@ -1930,6 +1930,7 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
      */
     @Override
     public void run() {
+        System.out.println("Run start here.");
         if (m_restoreAgent != null) {
             // start restore process
             m_restoreAgent.restore();
