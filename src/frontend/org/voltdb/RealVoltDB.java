@@ -1950,6 +1950,7 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
         }
 
         m_isRunning = true;
+        System.out.println("Run ends here.");
     }
 
     /**

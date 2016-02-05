@@ -891,6 +891,7 @@ public class VoltDB {
             } else {
                 initialize(config);
                 instance().run();
+                System.out.println("Main ends here.");
             }
         }
         catch (OutOfMemoryError e) {

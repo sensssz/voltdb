@@ -230,6 +230,7 @@ CTX.INPUT['common'] = """
  SQLException.cpp
  InterruptException.cpp
  StringRef.cpp
+ trace_tool.cc
  tabletuple.cpp
  TupleSchema.cpp
  types.cpp
