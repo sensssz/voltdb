@@ -168,6 +168,8 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
         "</deployment>"
     };
 
+    private boolean haha = false;
+
     private final VoltLogger hostLog = new VoltLogger("HOST");
     private final VoltLogger consoleLog = new VoltLogger("CONSOLE");
 
@@ -1930,6 +1932,7 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
      */
     @Override
     public void run() {
+        haha = true;
         System.out.println("Run start here.");
         if (m_restoreAgent != null) {
             // start restore process
@@ -1952,6 +1955,7 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
 
         m_isRunning = true;
         System.out.println("Run ends here.");
+        haha = false;
     }
 
     /**
@@ -2569,6 +2573,7 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
     @Override
     public void onRestoreCompletion(long txnId, Map<Integer, Long> perPartitionTxnIds) {
 
+        System.out.println("The value of haha should be true, and it's actually " + haha);
         System.out.println("Is this also happening after end of main?");
         /*
          * Command log is already initialized if this is a rejoin or a join
