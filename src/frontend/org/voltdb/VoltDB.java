@@ -892,13 +892,13 @@ public class VoltDB {
             } else {
                 initialize(config);
                 instance().run();
-                System.out.println("Main ends here.");
             }
         }
         catch (OutOfMemoryError e) {
             String errmsg = "VoltDB Main thread: ran out of Java memory. This node will shut down.";
             VoltDB.crashLocalVoltDB(errmsg, false, e);
         }
+        System.out.println("Main ends here.");
     }
 
     /**

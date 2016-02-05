@@ -2642,6 +2642,7 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
             // Shouldn't be here, but to be safe
             m_mode = OperationMode.RUNNING;
         }
+        System.out.println("Why does this happen after end of main?");
         consoleLog.l7dlog( Level.INFO, LogKeys.host_VoltDB_ServerCompletedInitialization.name(), null);
 
         // Create a zk node to indicate initialization is completed
