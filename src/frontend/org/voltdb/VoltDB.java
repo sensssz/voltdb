@@ -883,6 +883,7 @@ public class VoltDB {
      * @param args Requires catalog and deployment file locations.
      */
     public static void main(String[] args) {
+        System.out.println("Main starts here.");
         //Thread.setDefaultUncaughtExceptionHandler(new VoltUncaughtExceptionHandler());
         Configuration config = new Configuration(args);
         try {
