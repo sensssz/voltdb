@@ -2568,6 +2568,7 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
     @Override
     public void onRestoreCompletion(long txnId, Map<Integer, Long> perPartitionTxnIds) {
 
+        System.out.println("Is this also happening after end of main?");
         /*
          * Command log is already initialized if this is a rejoin or a join
          */
