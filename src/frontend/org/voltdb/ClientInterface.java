@@ -1177,7 +1177,6 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
             @Override
             public void deliver(final VoltMessage message) {
                 if (message instanceof InitiateResponseMessage) {
-                    System.out.println("Is InitiateResponseMessage");
                     final CatalogContext catalogContext = m_catalogContext.get();
                     // forward response; copy is annoying. want slice of response.
                     InitiateResponseMessage response = (InitiateResponseMessage)message;
@@ -1201,10 +1200,8 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                         cihm.connection.writeStream().fastEnqueue(new ClientResponseWork(response, cihm, procedure));
                     }
                 } else if (message instanceof BinaryPayloadMessage) {
-                    System.out.println("Is BinaryPayloadMessage");
                     handlePartitionFailOver((BinaryPayloadMessage)message);
                 } else {
-                    System.out.println("Is something else");
                     m_d.offer(message);
                 }
             }

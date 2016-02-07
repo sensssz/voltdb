@@ -1011,8 +1011,10 @@ public class HostMessenger implements SocketJoiner.JoinHandler, InterfaceToMesse
 
         ForeignHost host = presend(destinationHSId, message);
         if (host != null) {
+            System.out.println("Foreign host sending message");
             host.send(new long [] { destinationHSId }, message);
         }
+        System.out.println("Mailbox delivering message");
     }
 
     public void send(long[] destinationHSIds, final VoltMessage message)
