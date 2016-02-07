@@ -1011,6 +1011,7 @@ public class HostMessenger implements SocketJoiner.JoinHandler, InterfaceToMesse
 
         ForeignHost host = presend(destinationHSId, message);
         if (host != null) {
+            System.out.println("ForeignHost sending message");
             host.send(new long [] { destinationHSId }, message);
         }
     }
