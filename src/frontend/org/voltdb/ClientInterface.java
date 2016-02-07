@@ -2014,6 +2014,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
             // unable to hash to a site, return an error
             return getMispartitionedErrorResponse(task, catProc, e);
         }
+        System.out.println("Task is " + task.procName);
         boolean success = createTransaction(handler.connectionId(),
                         task,
                         catProc.getReadonly(),
