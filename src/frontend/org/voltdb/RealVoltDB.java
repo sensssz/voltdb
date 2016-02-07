@@ -168,8 +168,6 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
         "</deployment>"
     };
 
-    private boolean haha = false;
-
     private final VoltLogger hostLog = new VoltLogger("HOST");
     private final VoltLogger consoleLog = new VoltLogger("CONSOLE");
 
@@ -1932,8 +1930,6 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
      */
     @Override
     public void run() {
-        haha = true;
-        System.out.println("Run start here.");
         if (m_restoreAgent != null) {
             // start restore process
             m_restoreAgent.restore();
@@ -1954,8 +1950,6 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback {
         }
 
         m_isRunning = true;
-        System.out.println("Run ends here.");
-        haha = false;
     }
 
     /**

@@ -883,7 +883,6 @@ public class VoltDB {
      * @param args Requires catalog and deployment file locations.
      */
     public static void main(String[] args) {
-        System.out.println("Main starts here.");
         //Thread.setDefaultUncaughtExceptionHandler(new VoltUncaughtExceptionHandler());
         Configuration config = new Configuration(args);
         try {
@@ -898,7 +897,6 @@ public class VoltDB {
             String errmsg = "VoltDB Main thread: ran out of Java memory. This node will shut down.";
             VoltDB.crashLocalVoltDB(errmsg, false, e);
         }
-        System.out.println("Main ends here.");
     }
 
     /**

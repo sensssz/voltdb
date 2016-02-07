@@ -1783,6 +1783,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
         final AuthSystem.AuthUser user = catalogContext.authSystem.getUser(handler.m_username);
 
         Procedure catProc = getProcedureFromName(task.procName, catalogContext);
+        System.out.println("Task is " + task.procName);
 
         if (user == null) {
             authLog.info("User " + handler.m_username + " has been removed from the system via a catalog update");
