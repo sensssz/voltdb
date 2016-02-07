@@ -1082,10 +1082,8 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
             } else {
                 initiatorHSId = m_cartographer.getHSIdForSinglePartitionMaster(partition);
             }
-            System.out.println("Single");
         }
         else {
-            System.out.println("Multiple");
             //Multi-part transactions go to the multi-part coordinator
             initiatorHSId = m_cartographer.getHSIdForMultiPartitionInitiator();
             // Treat all MP reads as short-circuit since they can run out-of-order
@@ -1182,6 +1180,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                     final CatalogContext catalogContext = m_catalogContext.get();
                     // forward response; copy is annoying. want slice of response.
                     InitiateResponseMessage response = (InitiateResponseMessage)message;
+                    System.out.println("Transaction is finished");
                     StoredProcedureInvocation invocation = response.getInvocation();
                     Iv2Trace.logFinishTransaction(response, m_mailbox.getHSId());
                     ClientInterfaceHandleManager cihm = m_cihm.get(response.getClientConnectionId());
