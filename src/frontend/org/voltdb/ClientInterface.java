@@ -1176,6 +1176,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
             LinkedBlockingQueue<VoltMessage> m_d = new LinkedBlockingQueue<VoltMessage>();
             @Override
             public void deliver(final VoltMessage message) {
+                System.out.println("LocalMailBox delivering message");
                 if (message instanceof InitiateResponseMessage) {
                     final CatalogContext catalogContext = m_catalogContext.get();
                     // forward response; copy is annoying. want slice of response.
@@ -1202,6 +1203,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                 } else if (message instanceof BinaryPayloadMessage) {
                     handlePartitionFailOver((BinaryPayloadMessage)message);
                 } else {
+                    System.out.println("Message is something else");
                     m_d.offer(message);
                 }
             }
