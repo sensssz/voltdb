@@ -1116,9 +1116,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                     isForReplay);
 
         Iv2Trace.logCreateTransaction(workRequest);
-        TraceTool.shouldTrace.set(Boolean.TRUE);
         m_mailbox.send(initiatorHSId, workRequest);
-        TraceTool.shouldTrace.set(Boolean.FALSE);
         return true;
     }
 
