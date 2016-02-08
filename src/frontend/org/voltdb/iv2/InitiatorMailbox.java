@@ -294,7 +294,7 @@ public class InitiatorMailbox implements Mailbox
         }
         m_repairLog.deliver(message);
         if (canDeliver) {
-            if (TraceTool.shouldTrace != null && TraceTool.shouldTrace.get()) {
+            if (TraceTool.shouldTrace != null && TraceTool.shouldTrace.get() != null && TraceTool.shouldTrace.get()) {
                 System.out.println("Scheduler is of type " + m_scheduler.getClass().getName());
             }
             m_scheduler.deliver(message);
