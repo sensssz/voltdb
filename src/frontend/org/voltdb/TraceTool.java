@@ -16,6 +16,7 @@ public class TraceTool {
     private static final ReentrantReadWriteLock latencyLock = new ReentrantReadWriteLock();
     private static final Thread checkingQueryThread;
     private static long lastQueryStartTime = 0;
+    public static ThreadLocal<Boolean> shouldTrace;
     static {
         for (int index = 0; index < latencies.size(); ++index) {
             ArrayList<Integer> funcLatency = new ArrayList<>();
@@ -30,6 +31,7 @@ public class TraceTool {
             }
         });
         checkingQueryThread.start();
+        shouldTrace.set(Boolean.FALSE);
     }
 
     private static void dumpData() {

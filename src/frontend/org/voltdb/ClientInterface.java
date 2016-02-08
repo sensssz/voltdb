@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.sun.deploy.trace.Trace;
 import org.HdrHistogram_voltpatches.AbstractHistogram;
 import org.apache.zookeeper_voltpatches.ZooKeeper;
 import org.json_voltpatches.JSONException;
@@ -1116,8 +1117,9 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                     isForReplay);
 
         Iv2Trace.logCreateTransaction(workRequest);
+        TraceTool.shouldTrace.set(Boolean.TRUE);
         m_mailbox.send(initiatorHSId, workRequest);
-        System.out.println("Initiator HSID is " + initiatorHSId);
+        TraceTool.shouldTrace.set(Boolean.FALSE);
         return true;
     }
 

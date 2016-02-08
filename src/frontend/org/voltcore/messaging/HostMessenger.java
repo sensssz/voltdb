@@ -855,9 +855,6 @@ public class HostMessenger implements SocketJoiner.JoinHandler, InterfaceToMesse
         if (hostId == m_localHostId) {
             Mailbox mbox = m_siteMailboxes.get(hsId);
             if (mbox != null) {
-                if (hsId > 0) {
-                    System.out.println("Mailbox for " + hsId + " is of type " + mbox.getClass().getName());
-                }
                 mbox.deliver(message);
                 return null;
             } else {

@@ -29,6 +29,7 @@ import org.voltcore.messaging.Mailbox;
 import org.voltcore.messaging.Subject;
 import org.voltcore.messaging.VoltMessage;
 import org.voltcore.utils.CoreUtils;
+import org.voltdb.TraceTool;
 import org.voltdb.VoltDB;
 import org.voltdb.VoltZK;
 import org.voltdb.messaging.CompleteTransactionMessage;
@@ -293,6 +294,9 @@ public class InitiatorMailbox implements Mailbox
         }
         m_repairLog.deliver(message);
         if (canDeliver) {
+            if (TraceTool.shouldTrace.get()) {
+                System.out.println("Scheduler is of type " + m_scheduler.getClass().getName());
+            }
             m_scheduler.deliver(message);
         }
     }
