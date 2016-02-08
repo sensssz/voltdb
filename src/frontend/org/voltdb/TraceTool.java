@@ -16,7 +16,7 @@ public class TraceTool {
     private static final ReentrantReadWriteLock latencyLock = new ReentrantReadWriteLock();
     private static final Thread checkingQueryThread;
     private static long lastQueryStartTime = 0;
-    public static ThreadLocal<Boolean> shouldTrace;
+    public static ThreadLocal<Boolean> shouldTrace = new ThreadLocal<>();
     static {
         for (int index = 0; index < latencies.size(); ++index) {
             ArrayList<Integer> funcLatency = new ArrayList<>();
@@ -24,10 +24,12 @@ public class TraceTool {
             latencies.add(funcLatency);
         }
         checkingQueryThread = new Thread(() -> {
-            long now = System.nanoTime();
-            if (now - lastQueryStartTime >= 5e9 && trxID.get() > 0) {
-                dumpData();
-                trxID.set(0);
+            while (true) {
+                long now = System.nanoTime();
+                if (now - lastQueryStartTime >= 5e9 && trxID.get() > 0) {
+                    dumpData();
+                    trxID.set(0);
+                }
             }
         });
         checkingQueryThread.start();
