@@ -1117,6 +1117,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
 
         Iv2Trace.logCreateTransaction(workRequest);
         m_mailbox.send(initiatorHSId, workRequest);
+        System.out.println("Initiator HSID is " + initiatorHSId);
         return true;
     }
 
@@ -1180,7 +1181,6 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                     final CatalogContext catalogContext = m_catalogContext.get();
                     // forward response; copy is annoying. want slice of response.
                     InitiateResponseMessage response = (InitiateResponseMessage)message;
-                    System.out.println("Transaction is finished");
                     StoredProcedureInvocation invocation = response.getInvocation();
                     Iv2Trace.logFinishTransaction(response, m_mailbox.getHSId());
                     ClientInterfaceHandleManager cihm = m_cihm.get(response.getClientConnectionId());
