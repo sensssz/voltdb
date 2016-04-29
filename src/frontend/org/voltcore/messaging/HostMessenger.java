@@ -61,6 +61,7 @@ import org.voltcore.utils.ShutdownHooks;
 import org.voltcore.zk.CoreZK;
 import org.voltcore.zk.ZKUtil;
 import org.voltdb.VoltDB;
+import org.voltdb.messaging.Iv2InitiateTaskMessage;
 import org.voltdb.utils.MiscUtils;
 
 import com.google_voltpatches.common.base.Preconditions;
@@ -854,6 +855,10 @@ public class HostMessenger implements SocketJoiner.JoinHandler, InterfaceToMesse
         // the local machine case
         if (hostId == m_localHostId) {
             Mailbox mbox = m_siteMailboxes.get(hsId);
+            if (message.getClass() == Iv2InitiateTaskMessage.class) {
+                System.out.println("Message is " + message);
+                System.out.println("Mailbox type is " + mbox.getClass());
+            }
             if (mbox != null) {
                 mbox.deliver(message);
                 return null;
