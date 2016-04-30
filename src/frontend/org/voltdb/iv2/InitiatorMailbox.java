@@ -294,7 +294,6 @@ public class InitiatorMailbox implements Mailbox
         }
         m_repairLog.deliver(message);
         if (canDeliver) {
-            System.out.println("Scheduler is of type " + m_scheduler.getClass().getName());
             m_scheduler.deliver(message);
         }
     }
