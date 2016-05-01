@@ -56,6 +56,7 @@ import org.voltdb.exceptions.EEException;
 import org.voltdb.exceptions.SerializableException;
 import org.voltdb.exceptions.SpecifiedException;
 import org.voltdb.groovy.GroovyScriptProcedureDelegate;
+import org.voltdb.iv2.SysProcDuplicateCounter;
 import org.voltdb.iv2.UniqueIdGenerator;
 import org.voltdb.messaging.FragmentTaskMessage;
 import org.voltdb.planner.ActivePlanRepository;
@@ -324,6 +325,7 @@ public class ProcedureRunner {
                         if (HOST_TRACE_ENABLED) {
                             log.trace("invoking... procMethod=" + m_procMethod.getName() + ", class=" + m_procMethod.getDeclaringClass().getName());
                         }
+                        System.out.println("invoking... procMethod=" + m_procMethod.getName() + ", class=" + m_procMethod.getDeclaringClass().getName());
                         try {
                             Object rawResult = m_procMethod.invoke(m_procedure, paramList);
                             results = getResultsFromRawResults(rawResult);
