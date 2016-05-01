@@ -69,8 +69,8 @@ function server() {
 function client() {
     srccompile
     java -classpath obj:$CLASSPATH:obj com.MyTPCC \
-        --servers=localhost \
-        --duration=180 \
+        --servers=salat3.eecs.umich.edu \
+        --duration=600 \
         --warehouses=256 \
         --scalefactor=22
 }

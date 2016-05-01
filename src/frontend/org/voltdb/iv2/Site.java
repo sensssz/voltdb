@@ -591,12 +591,6 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                         m_currentTxnId = ((TransactionTask)task).getTxnId();
                         m_lastTxnTime = EstTime.currentTimeMillis();
                     }
-                    if (task instanceof SpProcedureTask) {
-                        if (count % 10000 == 0) {
-                            System.out.println("Site " + Thread.currentThread().getName() + " is running task " + task.toString());
-                        }
-                        ++count;
-                    }
                     task.run(getSiteProcedureConnection());
                 } else if (m_rejoinState == kStateReplayingRejoin) {
                     // Rejoin operation poll and try to do some catchup work. Tasks

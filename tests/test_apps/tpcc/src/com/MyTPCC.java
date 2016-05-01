@@ -164,6 +164,11 @@ public class MyTPCC
                     counterLock.unlock();
                 }
             }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         try
@@ -251,7 +256,7 @@ public class MyTPCC
         {
             try
             {
-                m_clientCon = ClientConnectionPool.get(servers, 21212);
+                m_clientCon = ClientConnectionPool.get(servers, 4242);
                 break;
             }
             catch (Exception e)
