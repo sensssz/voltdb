@@ -369,7 +369,6 @@ public class ProcedureRunner {
             // single statement only work
             // (this could be made faster, but with less code re-use)
             else {
-                System.out.println(m_procedureName + " is not a Java class");
                 assert(m_catProc.getStatements().size() == 1);
                 try {
                     m_cachedSingleStmt.params = getCleanParams(m_cachedSingleStmt.stmt, paramList);
