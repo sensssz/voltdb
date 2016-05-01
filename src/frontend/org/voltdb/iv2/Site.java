@@ -578,6 +578,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
             PosixJNAAffinity.INSTANCE.setAffinity(m_coreBindIds);
         }
         initialize();
+        long count = 0;
         m_startupConfig = null; // release the serializableCatalog.
         //Maintain a minimum ratio of task log (unrestricted) to live (restricted) transactions
         final MinimumRatioMaintainer mrm = new MinimumRatioMaintainer(m_taskLogReplayRatio);
@@ -590,7 +591,11 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                         m_currentTxnId = ((TransactionTask)task).getTxnId();
                         m_lastTxnTime = EstTime.currentTimeMillis();
                     }
+                    if (count % 100 == 0) {
+                        System.out.println("Site " + Thread.currentThread().getName() + " is running task " + task.toString());
+                    }
                     task.run(getSiteProcedureConnection());
+                    ++count;
                 } else if (m_rejoinState == kStateReplayingRejoin) {
                     // Rejoin operation poll and try to do some catchup work. Tasks
                     // are responsible for logging any rejoin work they might have.
