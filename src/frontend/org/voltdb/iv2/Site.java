@@ -590,6 +590,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                     if (task instanceof TransactionTask) {
                         m_currentTxnId = ((TransactionTask)task).getTxnId();
                         m_lastTxnTime = EstTime.currentTimeMillis();
+                        System.out.println(Thread.currentThread().getName() + " is executing " + task);
                     }
                     task.run(getSiteProcedureConnection());
                 } else if (m_rejoinState == kStateReplayingRejoin) {

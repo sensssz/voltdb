@@ -51,6 +51,8 @@ public class Iv2InitiateTaskMessage extends TransactionInfoBaseMessage {
     // not serialized.
     AtomicBoolean m_isDurable;
 
+    long m_startTime;
+
     /** Empty constructor for de-serialization */
     Iv2InitiateTaskMessage() {
         super();
@@ -77,6 +79,7 @@ public class Iv2InitiateTaskMessage extends TransactionInfoBaseMessage {
         m_invocation = invocation;
         m_clientInterfaceHandle = clientInterfaceHandle;
         m_connectionId = connectionId;
+        m_startTime = System.nanoTime();
     }
 
     /** Copy constructor for repair. */
@@ -88,6 +91,7 @@ public class Iv2InitiateTaskMessage extends TransactionInfoBaseMessage {
         m_invocation = rhs.m_invocation;
         m_clientInterfaceHandle = rhs.m_clientInterfaceHandle;
         m_connectionId = rhs.m_connectionId;
+        m_startTime = System.nanoTime();
     }
 
     @Override
