@@ -325,7 +325,6 @@ public class ProcedureRunner {
                         if (HOST_TRACE_ENABLED) {
                             log.trace("invoking... procMethod=" + m_procMethod.getName() + ", class=" + m_procMethod.getDeclaringClass().getName());
                         }
-                        System.out.println("invoking... procMethod=" + m_procMethod.getName() + ", class=" + m_procMethod.getDeclaringClass().getName());
                         try {
                             Object rawResult = m_procMethod.invoke(m_procedure, paramList);
                             results = getResultsFromRawResults(rawResult);
