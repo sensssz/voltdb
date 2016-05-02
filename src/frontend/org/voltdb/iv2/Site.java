@@ -573,7 +573,6 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
         else {
             Thread.currentThread().setName("SP " + m_partitionId + " Site - " + CoreUtils.hsIdToString(m_siteId));
         }
-        System.out.println(getClass().getName() + " is started");
         if (m_coreBindIds != null) {
             PosixJNAAffinity.INSTANCE.setAffinity(m_coreBindIds);
         }
@@ -590,7 +589,6 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                     if (task instanceof TransactionTask) {
                         m_currentTxnId = ((TransactionTask)task).getTxnId();
                         m_lastTxnTime = EstTime.currentTimeMillis();
-                        System.out.println(getClass().getName() + " is executing " + task);
                     }
                     task.run(getSiteProcedureConnection());
                 } else if (m_rejoinState == kStateReplayingRejoin) {
