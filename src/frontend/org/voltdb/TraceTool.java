@@ -110,6 +110,6 @@ public class TraceTool {
         latencyLock.readLock().lock();
         long oldDuration = latencies.get(index).get(currTrxID.get());
         latencies.get(index).set(currTrxID.get(), oldDuration + duration);
-        latencyLock.writeLock().unlock();
+        latencyLock.readLock().unlock();
     }
 }
