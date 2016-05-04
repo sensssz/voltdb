@@ -59,7 +59,7 @@ public class TraceTool {
     private static long trxStartTime;
     private static ThreadLocal<Integer> currTrxID = new ThreadLocal<Integer>() {
         @Override protected Integer initialValue() {
-            return trxID.getAndIncrement();
+            return 0;
         }
     };
     private static ThreadLocal<Long> functionStart = new ThreadLocal<>();
@@ -68,6 +68,12 @@ public class TraceTool {
     public static void trx_start(long timeBeforePickedUp) {
         trxStartTime = System.nanoTime();
         lastQueryStartTime = trxStartTime;
+        latencyLock.writeLock().lock();
+        for (ArrayList<Long> funcLatency : latencies) {
+            funcLatency.add(0L);
+        }
+        latencyLock.writeLock().unlock();
+        currTrxID.set(trxID.getAndIncrement());
         // NUM_FUNC + 1 is the index for function other
         addRecord(NUM_FUNC + 1, timeBeforePickedUp);
         // NUM_FUNC + 1 is the index for latency
@@ -76,13 +82,7 @@ public class TraceTool {
 
     public static void trx_end() {
         long latency = System.nanoTime() - trxStartTime;
-        latencyLock.writeLock().lock();
-        latencies.get(NUM_FUNC + 2).set(currTrxID.get(), latency);
-        for (ArrayList<Long> funcLatency : latencies) {
-            funcLatency.add(0L);
-        }
-        latencyLock.writeLock().unlock();
-        currTrxID.set(trxID.getAndIncrement());
+        addRecord(NUM_FUNC + 2, latency);
     }
 
     public static void TRACE_FUNCTION_START() {
