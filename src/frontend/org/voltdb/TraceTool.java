@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class TraceTool {
     private static final int NUM_FUNC = 20;
     private static final AtomicInteger trxID = new AtomicInteger(0);
-    private static final ArrayList<ArrayList<Long>> latencies = new ArrayList<>(NUM_FUNC + 3);
+    private static final ArrayList<ArrayList<Integer>> latencies = new ArrayList<>(NUM_FUNC + 3);
     private static final ReentrantReadWriteLock latencyLock = new ReentrantReadWriteLock();
     private static final Thread checkingQueryThread;
     private static long lastQueryStartTime = 0;
@@ -40,12 +40,12 @@ public class TraceTool {
             PrintWriter writer = new PrintWriter(new FileWriter("latency"));
             latencyLock.writeLock().lock();
             for (int index = 0; index < latencies.size(); ++index) {
-                ArrayList<Long> funcLatency = latencies.get(index);
-                for (Long latency : funcLatency) {
+                ArrayList<Integer> funcLatency = latencies.get(index);
+                for (Integer latency : funcLatency) {
                     writer.println(index + "," + latency);
                 }
                 funcLatency.clear();
-                funcLatency.add(0L);
+                funcLatency.add(0);
             }
             latencyLock.writeLock().unlock();
 
@@ -67,8 +67,8 @@ public class TraceTool {
         trxStartTime = System.nanoTime();
         lastQueryStartTime = trxStartTime;
         latencyLock.writeLock().lock();
-        for (ArrayList<Long> funcLatency : latencies) {
-            funcLatency.add(0L);
+        for (ArrayList<Integer> funcLatency : latencies) {
+            funcLatency.add(0);
         }
         latencyLock.writeLock().unlock();
         currTrxID.set(trxID.getAndIncrement());
@@ -109,7 +109,7 @@ public class TraceTool {
         }
         latencyLock.readLock().lock();
         long oldDuration = latencies.get(index).get(currTrxID.get());
-        latencies.get(index).set(currTrxID.get(), oldDuration + duration);
+        latencies.get(index).set(currTrxID.get(), (int) (oldDuration + duration));
         latencyLock.readLock().unlock();
     }
 }
