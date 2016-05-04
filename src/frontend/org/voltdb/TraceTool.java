@@ -57,7 +57,11 @@ public class TraceTool {
     }
 
     private static long trxStartTime;
-    private static ThreadLocal<Integer> currTrxID = new ThreadLocal<>();
+    private static ThreadLocal<Integer> currTrxID = new ThreadLocal<Integer>() {
+        @Override protected Integer initialValue() {
+            return trxID.getAndIncrement();
+        }
+    };
     private static ThreadLocal<Long> functionStart = new ThreadLocal<>();
     private static ThreadLocal<Long> callStart = new ThreadLocal<>();
 
