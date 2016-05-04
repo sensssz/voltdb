@@ -668,6 +668,7 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
         // the truncation handle, since it won't have meaning for anyone.
         if (message.isReadOnly()) {
             // the initiatorHSId is the ClientInterface mailbox. Yeah. I know.
+            System.out.println("Scheduler sending message to mailbox " + m_mailbox.getClass().getName());
             m_mailbox.send(message.getInitiatorHSId(), message);
             return;
         }
@@ -680,6 +681,7 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
             if (result == DuplicateCounter.DONE) {
                 m_duplicateCounters.remove(dcKey);
                 m_repairLogTruncationHandle = spHandle;
+                System.out.println("Scheduler sending message to mailbox " + m_mailbox.getClass().getName());
                 m_mailbox.send(counter.m_destinationId, counter.getLastResponse());
             }
             else if (result == DuplicateCounter.MISMATCH) {
@@ -689,6 +691,7 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
         else {
             // the initiatorHSId is the ClientInterface mailbox. Yeah. I know.
             m_repairLogTruncationHandle = spHandle;
+            System.out.println("Scheduler sending message to mailbox " + m_mailbox.getClass().getName());
             m_mailbox.send(message.getInitiatorHSId(), message);
         }
     }

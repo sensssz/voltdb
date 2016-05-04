@@ -97,6 +97,7 @@ public class SpProcedureTask extends ProcedureTask
         }
         completeInitiateTask(siteConnection);
         response.m_sourceHSId = m_initiator.getHSId();
+        System.out.println("Delivering response to initiator mailbox");
         m_initiator.deliver(response);
         if (EXEC_TRACE_ENABLED) {
             execLog.l7dlog( Level.TRACE, LogKeys.org_voltdb_ExecutionSite_SendingCompletedWUToDtxn.name(), null);

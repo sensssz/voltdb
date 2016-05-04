@@ -577,7 +577,6 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
             PosixJNAAffinity.INSTANCE.setAffinity(m_coreBindIds);
         }
         initialize();
-        long count = 0;
         m_startupConfig = null; // release the serializableCatalog.
         //Maintain a minimum ratio of task log (unrestricted) to live (restricted) transactions
         final MinimumRatioMaintainer mrm = new MinimumRatioMaintainer(m_taskLogReplayRatio);
