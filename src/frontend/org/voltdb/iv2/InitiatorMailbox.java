@@ -294,7 +294,6 @@ public class InitiatorMailbox implements Mailbox
         }
         m_repairLog.deliver(message);
         if (canDeliver) {
-            System.out.println("Initiator mailbox delivering message to scheduler");
             m_scheduler.deliver(message);
         }
     }
