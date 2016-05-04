@@ -36,39 +36,9 @@ import org.voltcore.utils.CoreUtils;
 import org.voltcore.utils.DBBPool;
 import org.voltcore.utils.EstTime;
 import org.voltcore.utils.Pair;
-import org.voltdb.BackendTarget;
-import org.voltdb.CatalogContext;
-import org.voltdb.CatalogSpecificPlanner;
-import org.voltdb.DRLogSegmentId;
-import org.voltdb.DependencyPair;
-import org.voltdb.HsqlBackend;
-import org.voltdb.IndexStats;
-import org.voltdb.LoadedProcedureSet;
-import org.voltdb.MemoryStats;
-import org.voltdb.NonVoltDBBackend;
-import org.voltdb.ParameterSet;
-import org.voltdb.PartitionDRGateway;
-import org.voltdb.PostGISBackend;
-import org.voltdb.PostgreSQLBackend;
-import org.voltdb.ProcedureRunner;
-import org.voltdb.SiteProcedureConnection;
-import org.voltdb.SiteSnapshotConnection;
-import org.voltdb.SnapshotDataTarget;
-import org.voltdb.SnapshotFormat;
-import org.voltdb.SnapshotSiteProcessor;
-import org.voltdb.SnapshotTableTask;
-import org.voltdb.StartAction;
-import org.voltdb.StatsAgent;
-import org.voltdb.StatsSelector;
-import org.voltdb.SystemProcedureExecutionContext;
-import org.voltdb.TableStats;
-import org.voltdb.TableStreamType;
-import org.voltdb.TheHashinator;
+import org.voltdb.*;
 import org.voltdb.TheHashinator.HashinatorConfig;
-import org.voltdb.TupleStreamStateInfo;
-import org.voltdb.VoltDB;
 import org.voltdb.VoltProcedure.VoltAbortException;
-import org.voltdb.VoltTable;
 import org.voltdb.catalog.CatalogMap;
 import org.voltdb.catalog.Cluster;
 import org.voltdb.catalog.Database;
@@ -589,7 +559,15 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                         m_currentTxnId = ((TransactionTask)task).getTxnId();
                         m_lastTxnTime = EstTime.currentTimeMillis();
                     }
+                    if (task instanceof SpProcedureTask) {
+                        SpTransactionState txnState = (SpTransactionState) ((SpProcedureTask) task).m_txnState;
+                        long startTime = txnState.m_initiationMsg.getStartTime();
+                        TraceTool.trx_start(System.nanoTime() - startTime);
+                    }
                     task.run(getSiteProcedureConnection());
+                    if (task instanceof SpProcedureTask) {
+                        TraceTool.trx_end();
+                    }
                 } else if (m_rejoinState == kStateReplayingRejoin) {
                     // Rejoin operation poll and try to do some catchup work. Tasks
                     // are responsible for logging any rejoin work they might have.

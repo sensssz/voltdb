@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Tracer {
     private static final int NUM_FUNCTIONS = 22;
     private static final boolean MONITOR = true;
-    private static List<List<Long>> execTime = new ArrayList<>();
+    private static List<List<Integer>> execTime = new ArrayList<>();
     private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private static ThreadLocal<Long> functionStart = new ThreadLocal<>();
     private static ThreadLocal<Long> functionEnd = new ThreadLocal<>();
@@ -46,8 +46,8 @@ public class Tracer {
 
     private Tracer() {
         for (int count = 0; count < NUM_FUNCTIONS; ++count) {
-            List<Long> list = new ArrayList<>();
-            list.add(0L);
+            List<Integer> list = new ArrayList<>();
+            list.add(0);
             execTime.add(list);
         }
     }
@@ -55,8 +55,8 @@ public class Tracer {
     public void trxStart() {
         currTrxId.set(trxId.getAndIncrement());
         lock.writeLock().lock();
-        for (List<Long> functions : execTime) {
-            functions.add(0L);
+        for (List<Integer> functions : execTime) {
+            functions.add(0);
         }
         lock.writeLock().unlock();
     }
@@ -69,19 +69,22 @@ public class Tracer {
     public void addRecord(int index, long duration) {
         lock.readLock().lock();
         long oldDuration = execTime.get(index).get(currTrxId.get());
-        execTime.get(index).set(currTrxId.get(), oldDuration + duration);
+        execTime.get(index).set(currTrxId.get(), (int) (oldDuration + duration));
         lock.writeLock().unlock();
     }
 
     public void writeLog() {
         try {
             PrintWriter writer = new PrintWriter(new FileWriter("latency"));
+            lock.writeLock().lock();
             int index = 0;
-            for (List<Long> functions : execTime) {
-                for (Long duration : functions) {
+            for (List<Integer> functions : execTime) {
+                for (Integer duration : functions) {
                     writer.println(index + "," + duration);
                 }
             }
+            execTime.clear();
+            lock.writeLock().unlock();
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
