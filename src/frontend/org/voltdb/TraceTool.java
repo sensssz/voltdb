@@ -15,10 +15,8 @@ public class TraceTool {
     private static final Thread checkingQueryThread;
     private static long lastQueryStartTime = 0;
     static {
-        for (int index = 0; index < latencies.size(); ++index) {
-            ArrayList<Long> funcLatency = new ArrayList<>();
-            funcLatency.add(0L);
-            latencies.add(funcLatency);
+        for (int index = 0; index < NUM_FUNC + 3; ++index) {
+            latencies.add(new ArrayList<>());
         }
         checkingQueryThread = new Thread(() -> {
             while (true) {
