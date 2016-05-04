@@ -164,11 +164,6 @@ public class MyTPCC
                     counterLock.unlock();
                 }
             }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
 
         try
