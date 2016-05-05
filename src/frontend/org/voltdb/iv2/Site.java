@@ -583,6 +583,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                             replayFromTaskLog(mrm);
                         }
                         mrm.didRestricted();
+                        System.out.println("In second branch");
                         if (m_rejoinState == kStateRunning) {
                             task.run(getSiteProcedureConnection());
                         } else {
@@ -595,6 +596,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                     if (!didWork) Thread.yield();
                 } else {
                     SiteTasker task = m_scheduler.take();
+                    System.out.println("In third branch");
                     task.runForRejoin(getSiteProcedureConnection(), m_rejoinTaskLog);
                 }
             }
