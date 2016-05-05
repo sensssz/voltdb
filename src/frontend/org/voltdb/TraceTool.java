@@ -75,13 +75,17 @@ public class TraceTool {
     private static ThreadLocal<Long> functionStart = new ThreadLocal<>();
     private static ThreadLocal<Long> callStart = new ThreadLocal<>();
 
-    public static void start(String procName) {
-        if (!starts) {
-            if (procName.contains("neworder") ||
+    public static boolean isTarget(String procName) {
+        return procName.contains("neworder") ||
                 procName.contains("ostat") ||
                 procName.contains("payment") ||
                 procName.contains("slev") ||
-                procName.contains("delivery")) {
+                procName.contains("delivery");
+    }
+
+    public static void start(String procName) {
+        if (!starts) {
+            if (isTarget(procName)) {
                 System.out.println("Monitor is started");
                 starts = true;
             }

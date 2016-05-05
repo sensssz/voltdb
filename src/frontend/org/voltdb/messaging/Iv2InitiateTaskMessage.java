@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.voltcore.messaging.TransactionInfoBaseMessage;
 import org.voltcore.utils.CoreUtils;
 import org.voltdb.StoredProcedureInvocation;
+import org.voltdb.TraceTool;
 import org.voltdb.iv2.TxnEgo;
 import org.voltdb.iv2.UniqueIdGenerator;
 
@@ -79,7 +80,11 @@ public class Iv2InitiateTaskMessage extends TransactionInfoBaseMessage {
         m_invocation = invocation;
         m_clientInterfaceHandle = clientInterfaceHandle;
         m_connectionId = connectionId;
-        m_startTime = System.nanoTime();
+        if (TraceTool.isTarget(invocation.getProcName())) {
+            m_startTime = System.nanoTime();
+        } else {
+            m_startTime = 0;
+        }
     }
 
     /** Copy constructor for repair. */
@@ -91,7 +96,11 @@ public class Iv2InitiateTaskMessage extends TransactionInfoBaseMessage {
         m_invocation = rhs.m_invocation;
         m_clientInterfaceHandle = rhs.m_clientInterfaceHandle;
         m_connectionId = rhs.m_connectionId;
-        m_startTime = rhs.m_startTime;
+        if (rhs.m_startTime > 0) {
+            m_startTime = System.nanoTime();
+        } else {
+            m_startTime = 0;
+        }
     }
 
     @Override

@@ -555,6 +555,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                 if (m_rejoinState == kStateRunning) {
                     // Normal operation blocks the site thread on the sitetasker queue.
                     SiteTasker task = m_scheduler.take();
+                    boolean isTarget = false;
                     if (task instanceof TransactionTask) {
                         m_currentTxnId = ((TransactionTask)task).getTxnId();
                         m_lastTxnTime = EstTime.currentTimeMillis();
@@ -562,10 +563,13 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                     if (task instanceof SpProcedureTask) {
                         SpTransactionState txnState = (SpTransactionState) ((SpProcedureTask) task).m_txnState;
                         long startTime = txnState.m_initiationMsg.m_startTime;
-                        TraceTool.trx_start(System.nanoTime() - startTime);
+                        if (startTime > 0) {
+                            isTarget = true;
+                            TraceTool.trx_start(System.nanoTime() - startTime);
+                        }
                     }
                     task.run(getSiteProcedureConnection());
-                    if (task instanceof SpProcedureTask) {
+                    if (isTarget) {
                         TraceTool.trx_end();
                     }
                 } else if (m_rejoinState == kStateReplayingRejoin) {
