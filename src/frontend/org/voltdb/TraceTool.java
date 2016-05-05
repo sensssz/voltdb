@@ -15,6 +15,7 @@ public class TraceTool {
     private static final ReentrantReadWriteLock latencyLock = new ReentrantReadWriteLock();
     private static final Thread checkingQueryThread;
     private static long lastQueryStartTime = 0;
+    private static boolean starts = false;
     static {
         for (int index = 0; index < NUM_FUNC + 3; ++index) {
             latencies.add(new ArrayList<>());
@@ -65,7 +66,22 @@ public class TraceTool {
     private static ThreadLocal<Long> functionStart = new ThreadLocal<>();
     private static ThreadLocal<Long> callStart = new ThreadLocal<>();
 
+    public static void start(String procName) {
+        if (!starts) {
+            if (procName.contains("neworder") ||
+                procName.contains("ostat") ||
+                procName.contains("payment") ||
+                procName.contains("slev") ||
+                procName.contains("delivery")) {
+                starts = true;
+            }
+        }
+    }
+
     public static void trx_start(long timeBeforePickedUp) {
+        if (!starts) {
+            return;
+        }
         trxStartTime = System.nanoTime();
         lastQueryStartTime = trxStartTime;
         latencyLock.writeLock().lock();
@@ -81,6 +97,9 @@ public class TraceTool {
     }
 
     public static void trx_end() {
+        if (!starts) {
+            return;
+        }
         long latency = System.nanoTime() - trxStartTime;
         if (latency > latencies.get(NUM_FUNC + 2).get(currTrxID.get())) {
             System.out.println("Latency is longer than wait time");
@@ -89,20 +108,32 @@ public class TraceTool {
     }
 
     public static void TRACE_FUNCTION_START() {
+        if (!starts) {
+            return;
+        }
         functionStart.set(System.nanoTime());
     }
 
     public static void TRACE_FUNCTION_END() {
+        if (!starts) {
+            return;
+        }
         long functionEnd = System.nanoTime();
         addRecord(0, functionEnd - functionStart.get());
     }
 
     public static boolean TRACE_START() {
+        if (!starts) {
+            return false;
+        }
         callStart.set(System.nanoTime());
         return false;
     }
 
     public static boolean TRACE_END(int index) {
+        if (!starts) {
+            return false;
+        }
         long callEnd = System.nanoTime();
         addRecord(index, callEnd - callStart.get());
         return false;
