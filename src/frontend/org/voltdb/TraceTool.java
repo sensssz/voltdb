@@ -101,9 +101,6 @@ public class TraceTool {
             return;
         }
         long latency = System.nanoTime() - trxStartTime;
-        if (latency > latencies.get(NUM_FUNC + 2).get(currTrxID.get())) {
-            System.out.println("Latency is longer than wait time");
-        }
         addRecord(NUM_FUNC + 2, latency);
     }
 
