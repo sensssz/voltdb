@@ -534,6 +534,7 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
             }
         }
         Iv2Trace.logIv2InitiateTaskMessage(message, m_mailbox.getHSId(), msg.getTxnId(), newSpHandle);
+        msg.m_startTime = message.m_startTime;
         doLocalInitiateOffer(msg);
         return;
     }

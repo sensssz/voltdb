@@ -561,7 +561,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                     }
                     if (task instanceof SpProcedureTask) {
                         SpTransactionState txnState = (SpTransactionState) ((SpProcedureTask) task).m_txnState;
-                        long startTime = txnState.m_initiationMsg.getStartTime();
+                        long startTime = txnState.m_initiationMsg.m_startTime;
                         TraceTool.trx_start(System.nanoTime() - startTime);
                     }
                     task.run(getSiteProcedureConnection());
