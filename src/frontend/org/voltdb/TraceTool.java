@@ -1,5 +1,7 @@
 package org.voltdb;
 
+import org.voltdb.iv2.SysProcDuplicateCounter;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -73,6 +75,7 @@ public class TraceTool {
                 procName.contains("payment") ||
                 procName.contains("slev") ||
                 procName.contains("delivery")) {
+                System.out.println("Monitor is started");
                 starts = true;
             }
         }
