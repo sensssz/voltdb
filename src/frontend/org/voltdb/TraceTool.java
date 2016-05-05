@@ -3,6 +3,7 @@ package org.voltdb;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -37,6 +38,7 @@ public class TraceTool {
 
     private static void dumpData() {
         try {
+            System.out.println("Dump data to file " + Paths.get(".").toAbsolutePath().normalize().toString() + "/latency");
             PrintWriter writer = new PrintWriter(new FileWriter("latency"));
             latencyLock.writeLock().lock();
             for (int index = 0; index < latencies.size(); ++index) {
@@ -48,6 +50,7 @@ public class TraceTool {
                 funcLatency.add(0);
             }
             latencyLock.writeLock().unlock();
+            writer.close();
 
         } catch (IOException e) {
             e.printStackTrace();
