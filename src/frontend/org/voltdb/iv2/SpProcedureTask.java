@@ -23,10 +23,7 @@ import org.voltcore.logging.Level;
 import org.voltcore.messaging.Mailbox;
 import org.voltcore.utils.CoreUtils;
 import org.voltcore.utils.LatencyWatchdog;
-import org.voltdb.ClientResponseImpl;
-import org.voltdb.PartitionDRGateway;
-import org.voltdb.SiteProcedureConnection;
-import org.voltdb.VoltTable;
+import org.voltdb.*;
 import org.voltdb.client.ClientResponse;
 import org.voltdb.client.BatchTimeoutOverrideType;
 import org.voltdb.messaging.InitiateResponseMessage;
@@ -94,6 +91,7 @@ public class SpProcedureTask extends ProcedureTask
 
         if (!response.shouldCommit()) {
             m_txnState.setNeedsRollback(true);
+            TraceTool.trx_fails();
         }
         completeInitiateTask(siteConnection);
         response.m_sourceHSId = m_initiator.getHSId();
