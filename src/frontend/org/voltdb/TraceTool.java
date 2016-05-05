@@ -38,7 +38,6 @@ public class TraceTool {
 
     private static void dumpData() {
         try {
-            System.out.println("Dump data to file " + Paths.get(".").toAbsolutePath().normalize().toString() + "/latency");
             PrintWriter writer = new PrintWriter(new FileWriter("latency"));
             latencyLock.writeLock().lock();
             for (int index = 0; index < latencies.size(); ++index) {
