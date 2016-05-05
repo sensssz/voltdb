@@ -43,6 +43,7 @@ public class TraceTool {
         try {
             PrintWriter writer = new PrintWriter(new FileWriter("latency"));
             latencyLock.writeLock().lock();
+            System.out.println(latencies.get(0).size() + " transactions in total");
             for (int index = 0; index < latencies.size(); ++index) {
                 ArrayList<Long> funcLatency = latencies.get(index);
                 for (Long latency : funcLatency) {
