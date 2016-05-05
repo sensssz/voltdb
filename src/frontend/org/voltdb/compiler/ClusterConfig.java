@@ -141,6 +141,7 @@ public class ClusterConfig
         m_sitesPerHost = topo.getInt("sites_per_host");
         m_replicationFactor = topo.getInt("kfactor");
         m_errorMsg = "Config is unvalidated";
+        System.out.println("Sites per host: " + m_sitesPerHost);
     }
 
     public int getHostCount()
