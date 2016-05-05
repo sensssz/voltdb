@@ -88,8 +88,10 @@ public class TraceTool {
     }
 
     public static void start() {
-        System.out.println("Monitor is started");
-        starts = true;
+        if (!starts) {
+            System.out.println("Monitor is started");
+            starts = true;
+        }
     }
 
     public static void trx_start(long timeBeforePickedUp) {
