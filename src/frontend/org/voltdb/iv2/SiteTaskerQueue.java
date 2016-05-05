@@ -27,9 +27,15 @@ public class SiteTaskerQueue
 {
     private final LinkedTransferQueue<SiteTasker> m_tasks = new LinkedTransferQueue<SiteTasker>();
     private StarvationTracker m_starvationTracker;
+    private int count = 0;
 
     public boolean offer(SiteTasker task)
     {
+        if (count % 10000 == 0) {
+            System.out.println("Queue size is " + m_tasks.size());
+            count = 0;
+        }
+        ++count;
         return m_tasks.offer(task);
     }
 
