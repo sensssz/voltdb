@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class TraceTool {
-    private static final int NUM_FUNC = 20;
+    private static final int NUM_FUNC = 21;
     private static final AtomicInteger trxID = new AtomicInteger(0);
     private static final ArrayList<ArrayList<Long>> latencies = new ArrayList<>(NUM_FUNC + 3);
     private static final List<Integer> failedTrx = new ArrayList<>();
@@ -43,7 +43,7 @@ public class TraceTool {
         try {
             PrintWriter writer = new PrintWriter(new FileWriter("latency"));
             latencyLock.writeLock().lock();
-            System.out.println(latencies.get(0).size() - failedTrx.size() + " transactions in total, " + failedTrx.size() + " failed transactions.");
+            System.out.println(latencies.get(0).size() + " transactions in total, " + failedTrx.size() + " failed transactions.");
             for (int failed : failedTrx) {
                 for (ArrayList<Long> funcLatency : latencies) {
                     funcLatency.set(failed, -1L);
@@ -88,6 +88,7 @@ public class TraceTool {
     }
 
     public static void start() {
+        System.out.println("Monitor is started");
         starts = true;
     }
 
