@@ -44,15 +44,18 @@ public class TraceTool {
             PrintWriter writer = new PrintWriter(new FileWriter("latency"));
             latencyLock.writeLock().lock();
             System.out.println(latencies.get(0).size() - failedTrx.size() + " transactions in total, " + failedTrx.size() + " failed transactions.");
+            for (int failed : failedTrx) {
+                for (ArrayList<Long> funcLatency : latencies) {
+                    funcLatency.set(failed, -1L);
+                }
+            }
             for (int index = 0; index < latencies.size(); ++index) {
-                int trxID = 0;
                 ArrayList<Long> funcLatency = latencies.get(index);
                 for (Long latency : funcLatency) {
-                    if (!failedTrx.contains(trxID)) {
+                    if (latency != -1) {
                         assert (latency > 0);
                         writer.println(index + "," + latency);
                     }
-                    ++trxID;
                 }
                 funcLatency.clear();
                 funcLatency.add(0L);
