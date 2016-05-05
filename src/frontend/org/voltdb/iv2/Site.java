@@ -566,6 +566,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                         if (startTime > 0) {
                             isTarget = true;
                             TraceTool.trx_start(System.nanoTime() - startTime);
+                            System.out.println("txnId is " + txnState.txnId);
                         }
                     }
                     task.run(getSiteProcedureConnection());

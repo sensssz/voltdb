@@ -1115,9 +1115,6 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                     connectionId,
                     isForReplay);
 
-        if (invocation.getProcName().contains("payment")) {
-            System.out.println("Payment trxid is " + txnId);
-        }
         if (TraceTool.isTarget(invocation.getProcName())) {
             workRequest.m_startTime = System.nanoTime();
             TraceTool.start();
