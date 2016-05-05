@@ -571,6 +571,8 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                     task.run(getSiteProcedureConnection());
                     if (isTarget) {
                         TraceTool.trx_end();
+                        SpTransactionState txnState = (SpTransactionState) ((SpProcedureTask) task).m_txnState;
+                        txnState.m_initiationMsg.m_startTime = 0;
                     }
                 } else if (m_rejoinState == kStateReplayingRejoin) {
                     // Rejoin operation poll and try to do some catchup work. Tasks
