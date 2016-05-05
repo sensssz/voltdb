@@ -80,11 +80,7 @@ public class Iv2InitiateTaskMessage extends TransactionInfoBaseMessage {
         m_invocation = invocation;
         m_clientInterfaceHandle = clientInterfaceHandle;
         m_connectionId = connectionId;
-        if (TraceTool.isTarget(invocation.getProcName())) {
-            m_startTime = System.nanoTime();
-        } else {
-            m_startTime = 0;
-        }
+        m_startTime = 0;
     }
 
     /** Copy constructor for repair. */

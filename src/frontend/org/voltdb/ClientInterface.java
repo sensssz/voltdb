@@ -1114,6 +1114,10 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                     handle,
                     connectionId,
                     isForReplay);
+        if (TraceTool.isTarget(invocation.getProcName())) {
+            workRequest.m_startTime = System.nanoTime();
+            TraceTool.start();
+        }
 
         Iv2Trace.logCreateTransaction(workRequest);
         m_mailbox.send(initiatorHSId, workRequest);
@@ -2013,7 +2017,6 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
             // unable to hash to a site, return an error
             return getMispartitionedErrorResponse(task, catProc, e);
         }
-        TraceTool.start(task.procName);
         boolean success = createTransaction(handler.connectionId(),
                         task,
                         catProc.getReadonly(),

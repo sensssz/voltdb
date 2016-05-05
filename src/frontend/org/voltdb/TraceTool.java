@@ -84,13 +84,8 @@ public class TraceTool {
                 procName.contains("delivery");
     }
 
-    public static void start(String procName) {
-        if (!starts) {
-            if (isTarget(procName)) {
-                System.out.println("Monitor is started");
-                starts = true;
-            }
-        }
+    public static void start() {
+        starts = true;
     }
 
     public static void trx_start(long timeBeforePickedUp) {
