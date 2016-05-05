@@ -96,11 +96,7 @@ public class Iv2InitiateTaskMessage extends TransactionInfoBaseMessage {
         m_invocation = rhs.m_invocation;
         m_clientInterfaceHandle = rhs.m_clientInterfaceHandle;
         m_connectionId = rhs.m_connectionId;
-        if (rhs.m_startTime > 0) {
-            m_startTime = System.nanoTime();
-        } else {
-            m_startTime = 0;
-        }
+        m_startTime = 0;
     }
 
     @Override
