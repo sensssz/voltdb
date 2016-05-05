@@ -251,7 +251,7 @@ public class MyTPCC
         {
             try
             {
-                m_clientCon = ClientConnectionPool.get(servers, 21212);
+                m_clientCon = ClientConnectionPool.get(servers, 4242);
                 break;
             }
             catch (Exception e)
