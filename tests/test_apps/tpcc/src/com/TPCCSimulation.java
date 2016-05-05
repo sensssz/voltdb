@@ -265,23 +265,24 @@ public class TPCCSimulation
         // This is not strictly accurate: The requirement is for certain
         // *minimum* percentages to be maintained. This is close to the right
         // thing, but not precisely correct. See TPC-C 5.2.4 (page 68).
-        int x = generator.number(1, 100);
-        if (x <= 4) { // 4%
-            doStockLevel();
-            return Transaction.STOCK_LEVEL.ordinal();
-        } else if (x <= 4 + 4) { // 4%
-            doDelivery();
-            return Transaction.DELIVERY.ordinal();
-        } else if (x <= 4 + 4 + 4) { // 4%
-            doOrderStatus();
-            return Transaction.ORDER_STATUS.ordinal();
-        } else if (x <= 43 + 4 + 4 + 4) { // 43%
-            doPayment();
-            return Transaction.PAYMENT.ordinal();
-        } else { // 45%
-            assert x > 100 - 45;
-            doNewOrder();
-            return Transaction.NEW_ORDER.ordinal();
-        }
+        return Transaction.PAYMENT.ordinal();
+//        int x = generator.number(1, 100);
+//        if (x <= 4) { // 4%
+//            doStockLevel();
+//            return Transaction.STOCK_LEVEL.ordinal();
+//        } else if (x <= 4 + 4) { // 4%
+//            doDelivery();
+//            return Transaction.DELIVERY.ordinal();
+//        } else if (x <= 4 + 4 + 4) { // 4%
+//            doOrderStatus();
+//            return Transaction.ORDER_STATUS.ordinal();
+//        } else if (x <= 43 + 4 + 4 + 4) { // 43%
+//            doPayment();
+//            return Transaction.PAYMENT.ordinal();
+//        } else { // 45%
+//            assert x > 100 - 45;
+//            doNewOrder();
+//            return Transaction.NEW_ORDER.ordinal();
+//        }
     }
 }
