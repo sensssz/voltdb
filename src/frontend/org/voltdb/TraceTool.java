@@ -79,7 +79,7 @@ public class TraceTool {
     public static boolean isTarget(String procName) {
         return procName.contains("neworder") ||
                 procName.contains("ostat") ||
-                procName.contains("payment") ||
+                (procName.contains("payment") && !procName.contains("W")) ||
                 procName.contains("slev") ||
                 procName.contains("delivery");
     }
