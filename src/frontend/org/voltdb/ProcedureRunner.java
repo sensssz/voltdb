@@ -772,11 +772,13 @@ public class ProcedureRunner {
     }
 
     protected VoltTable[] executeQueriesInABatch(List<QueuedSQL> batch, boolean isFinalSQL) {
+        TraceTool.TRACE_FUNCTION_START();
         final int batchSize = batch.size();
 
         VoltTable[] results = null;
 
         if (batchSize == 0) {
+            TraceTool.TRACE_FUNCTION_END();
             return new VoltTable[] {};
         }
 
@@ -785,28 +787,38 @@ public class ProcedureRunner {
         if (getNonVoltDBBackendIfExists() != null) {
             results = new VoltTable[batchSize];
             int i = 0;
+            TraceTool.TRACE_START();
             for (QueuedSQL qs : batch) {
                 results[i++] = getNonVoltDBBackendIfExists().runSQLWithSubstitutions(
                         qs.stmt, qs.params, qs.stmt.statementParamJavaTypes);
             }
+            TraceTool.TRACE_END(1);
         }
         else if (m_isSinglePartition) {
+            TraceTool.TRACE_START();
             results = fastPath(batch);
+            TraceTool.TRACE_END(2);
         }
         else {
+            TraceTool.TRACE_START();
             results = slowPath(batch, isFinalSQL);
+            TraceTool.TRACE_END(3);
         }
 
         // check expectations
-        int i = 0; for (QueuedSQL qs : batch) {
+        int i = 0;
+        TraceTool.TRACE_START();
+        for (QueuedSQL qs : batch) {
             Expectation.check(m_procedureName, qs.stmt,
                     i, qs.expectation, results[i]);
             i++;
         }
+        TraceTool.TRACE_END(4);
 
         // clear the queued sql list for the next call
         batch.clear();
 
+        TraceTool.TRACE_FUNCTION_END();
         return results;
     }
 
