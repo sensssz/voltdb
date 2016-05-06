@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class TraceTool {
-    private static final int NUM_FUNC = 22;
+    private static final int NUM_FUNC = 6;
     private static final AtomicInteger trxID = new AtomicInteger(0);
     private static final ArrayList<ArrayList<Long>> latencies = new ArrayList<>(NUM_FUNC + 3);
     private static final List<Integer> failedTrx = new ArrayList<>();
