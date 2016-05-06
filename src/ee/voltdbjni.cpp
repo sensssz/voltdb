@@ -226,6 +226,7 @@ SHAREDLIB_JNIEXPORT jlong JNICALL Java_org_voltdb_jni_ExecutionEngine_nativeCrea
             topend->crashVoltDB(e);
         }
     }
+    init_trace_tool(env);
     return reinterpret_cast<jlong>(engine);
 }
 /**
@@ -307,7 +308,6 @@ SHAREDLIB_JNIEXPORT jint JNICALL Java_org_voltdb_jni_ExecutionEngine_nativeIniti
     } catch (const FatalException &e) {
         topend->crashVoltDB(e);
     }
-    init_trace_tool(env);
     return org_voltdb_jni_ExecutionEngine_ERRORCODE_ERROR;
 }
 
