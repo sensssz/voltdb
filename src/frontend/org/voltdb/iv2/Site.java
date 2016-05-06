@@ -1200,6 +1200,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
                                             boolean readOnly)
             throws EEException
     {
+        System.out.println("m_ee is of type " + m_ee.getClass().getName());
         return m_ee.executePlanFragments(
                 numFragmentIds,
                 planFragmentIds,

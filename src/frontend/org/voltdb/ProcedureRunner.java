@@ -1515,7 +1515,6 @@ public class ProcedureRunner {
 
        VoltTable[] results = null;
        try {
-           System.out.println("m_site is of type " + m_site.getClass().getName());
            results = m_site.executePlanFragments(
                    batchSize,
                    fragmentIds,
