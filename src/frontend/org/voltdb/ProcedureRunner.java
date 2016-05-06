@@ -56,7 +56,6 @@ import org.voltdb.exceptions.EEException;
 import org.voltdb.exceptions.SerializableException;
 import org.voltdb.exceptions.SpecifiedException;
 import org.voltdb.groovy.GroovyScriptProcedureDelegate;
-import org.voltdb.iv2.SysProcDuplicateCounter;
 import org.voltdb.iv2.UniqueIdGenerator;
 import org.voltdb.messaging.FragmentTaskMessage;
 import org.voltdb.planner.ActivePlanRepository;
