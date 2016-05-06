@@ -13,7 +13,7 @@ static __thread jmethodID trace_start = nullptr;
 static __thread jmethodID trace_end = nullptr;
 
 void init_trace_tool(JNIEnv *jenv) {
-    if (env == jenv) {
+    if (env != jenv) {
         env = jenv;
         trace_tool = env->FindClass("org/voltdb/TraceTool");
         assert(trace_tool);
