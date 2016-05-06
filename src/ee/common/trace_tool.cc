@@ -5,15 +5,15 @@
 using std::cout;
 using std::endl;
 
-static JNIEnv   *env = nullptr;
-static jclass    trace_tool = nullptr;
-static jmethodID trace_function_start = nullptr;
-static jmethodID trace_function_end = nullptr;
-static jmethodID trace_start = nullptr;
-static jmethodID trace_end = nullptr;
+static __thread JNIEnv   *env = nullptr;
+static __thread jclass    trace_tool = nullptr;
+static __thread jmethodID trace_function_start = nullptr;
+static __thread jmethodID trace_function_end = nullptr;
+static __thread jmethodID trace_start = nullptr;
+static __thread jmethodID trace_end = nullptr;
 
 void init_trace_tool(JNIEnv *jenv) {
-    if (env == nullptr) {
+    if (env == jenv) {
         env = jenv;
         trace_tool = env->FindClass("org/voltdb/TraceTool");
         assert(trace_tool);

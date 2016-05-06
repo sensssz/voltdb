@@ -563,6 +563,7 @@ SHAREDLIB_JNIEXPORT jint JNICALL Java_org_voltdb_jni_ExecutionEngine_nativeExecu
     //VOLT_DEBUG("nativeExecutePlanFragments() start");
 
     // setup
+    init_trace_tool(env);
     VoltDBEngine *engine = castToEngine(engine_ptr);
     assert(engine);
     Topend *topend = static_cast<JNITopend*>(engine->getTopend())->updateJNIEnv(env);
