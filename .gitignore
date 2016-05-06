@@ -69,3 +69,4 @@ doc/tutorials/auction/csvloader_*.csv
 /tests/sqlcmd/scripts/**/*.outdiffs
 out
 bundles
+**/latency
