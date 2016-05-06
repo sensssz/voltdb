@@ -110,6 +110,7 @@
 #include "common/RecoveryProtoMessage.h"
 #include "common/LegacyHashinator.h"
 #include "common/ElasticHashinator.h"
+#include "common/trace_tool.h"
 #include "storage/DRTupleStream.h"
 #include "storage/CompatibleDRTupleStream.h"
 #include "murmur3/MurmurHash3.h"
@@ -306,6 +307,7 @@ SHAREDLIB_JNIEXPORT jint JNICALL Java_org_voltdb_jni_ExecutionEngine_nativeIniti
     } catch (const FatalException &e) {
         topend->crashVoltDB(e);
     }
+    init_trace_tool(env);
     return org_voltdb_jni_ExecutionEngine_ERRORCODE_ERROR;
 }
 

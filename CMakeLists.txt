@@ -68,6 +68,8 @@ set(SOURCE_FILES
     src/ee/common/ThreadLocalPool.h
     src/ee/common/Topend.cpp
     src/ee/common/Topend.h
+    src/ee/common/trace_tool.cc
+    src/ee/common/trace_tool.h
     src/ee/common/TupleOutputStream.cpp
     src/ee/common/TupleOutputStream.h
     src/ee/common/TupleOutputStreamProcessor.cpp
