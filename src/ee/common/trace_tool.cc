@@ -5,12 +5,12 @@
 using std::cout;
 using std::endl;
 
-static JNIEnv   *env;
-static jclass    trace_tool;
-static jmethodID trace_function_start;
-static jmethodID trace_function_end;
-static jmethodID trace_start;
-static jmethodID trace_end;
+static JNIEnv   *env = nullptr;
+static jclass    trace_tool = nullptr;
+static jmethodID trace_function_start = nullptr;
+static jmethodID trace_function_end = nullptr;
+static jmethodID trace_start = nullptr;
+static jmethodID trace_end = nullptr;
 
 void init_trace_tool(JNIEnv *jenv) {
     if (env == nullptr) {
