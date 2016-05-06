@@ -543,6 +543,7 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
         else {
             Thread.currentThread().setName("SP " + m_partitionId + " Site - " + CoreUtils.hsIdToString(m_siteId));
         }
+        System.out.println(Thread.currentThread().getId() + ": " + Thread.currentThread().getName());
         if (m_coreBindIds != null) {
             PosixJNAAffinity.INSTANCE.setAffinity(m_coreBindIds);
         }

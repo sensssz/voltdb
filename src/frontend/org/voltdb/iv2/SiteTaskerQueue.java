@@ -32,7 +32,7 @@ public class SiteTaskerQueue
     public boolean offer(SiteTasker task)
     {
         if (count % 10000 == 0) {
-            System.out.println(m_tasks.size());
+            System.out.println(Thread.currentThread().getId() + ": " +  m_tasks.size());
         }
         ++count;
         return m_tasks.offer(task);
