@@ -14,7 +14,6 @@ static jmethodID trace_end = nullptr;
 
 void init_trace_tool(JNIEnv *jenv) {
     if (env == nullptr) {
-        cout << "Initializing trace_tool" << endl;
         env = jenv;
         trace_tool = env->FindClass("org/voltdb/TraceTool");
         assert(jclass);
@@ -27,23 +26,19 @@ void init_trace_tool(JNIEnv *jenv) {
 }
 
 void TRACE_FUNCTION_START() {
-    cout << "Calling TRACE_FUNCTION_START" << endl;
     env->CallStaticVoidMethod(trace_tool, trace_function_start);
 }
 
 void TRACE_FUNCTION_END() {
-    cout << "Calling TRACE_FUNCTION_END" << endl;
     env->CallStaticVoidMethod(trace_tool, trace_function_end);
 }
 
 bool TRACE_START() {
-    cout << "Calling TRACE_START" << endl;
     env->CallStaticBooleanMethod(trace_tool, trace_start);
     return false;
 }
 
 bool TRACE_END(int index) {
-    cout << "Calling TRACE_END" << endl;
     env->CallStaticBooleanMethod(trace_tool, trace_end, index);
     return false;
 }
