@@ -27,7 +27,6 @@ public class SiteTaskerQueue
 {
     private final LinkedTransferQueue<SiteTasker> m_tasks = new LinkedTransferQueue<SiteTasker>();
     private StarvationTracker m_starvationTracker;
-    private int count = 0;
 
     public boolean offer(SiteTasker task)
     {
@@ -37,10 +36,6 @@ public class SiteTaskerQueue
     // Block on the site tasker queue.
     public SiteTasker take() throws InterruptedException
     {
-        if (count % 10000 == 0) {
-            System.out.println(Thread.currentThread().getId() + ": " +  m_tasks.size());
-        }
-        ++count;
         SiteTasker task = m_tasks.poll();
         if (task == null) {
             m_starvationTracker.beginStarvation();
