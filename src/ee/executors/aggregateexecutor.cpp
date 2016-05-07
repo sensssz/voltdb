@@ -67,6 +67,11 @@
 #include <stdint.h>
 #include <utility>
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 namespace voltdb {
 /*
  * Type of the hash set used to check for column aggregate distinctness
@@ -800,6 +805,7 @@ TableTuple AggregateHashExecutor::p_execute_init(const NValueArray& params,
 
 bool AggregateHashExecutor::p_execute(const NValueArray& params)
 {
+    cout << "AggregateHashExecutor" << endl;
     // Input table
     Table* input_table = m_abstractNode->getInputTable();
     assert(input_table);
@@ -909,6 +915,7 @@ TableTuple AggregateSerialExecutor::p_execute_init(const NValueArray& params,
 bool AggregateSerialExecutor::p_execute(const NValueArray& params)
 {
     // Input table
+    cout << "AggregateSerialExecutor" << endl;
     Table* input_table = m_abstractNode->getInputTable();
     assert(input_table);
     VOLT_TRACE("input table\n%s", input_table->debug().c_str());
@@ -1033,6 +1040,7 @@ TableTuple AggregatePartialExecutor::p_execute_init(const NValueArray& params,
 bool AggregatePartialExecutor::p_execute(const NValueArray& params)
 {
     // Input table
+    cout << "AggregatePartialExecutor" << endl;
     Table* input_table = m_abstractNode->getInputTable(0);
     assert(input_table);
     VOLT_TRACE("input table\n%s", input_table->debug().c_str());

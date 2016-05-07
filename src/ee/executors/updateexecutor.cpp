@@ -66,6 +66,11 @@
 #include "storage/persistenttable.h"
 #include "storage/ConstraintFailureException.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 using namespace std;
 using namespace voltdb;
 
@@ -130,6 +135,7 @@ bool UpdateExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool UpdateExecutor::p_execute(const NValueArray &params) {
+    cout << "Update" << endl;
     assert(m_inputTable);
 
     // target table should be persistenttable

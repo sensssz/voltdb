@@ -60,6 +60,11 @@
 #include "storage/tablefactory.h"
 #include "storage/tableiterator.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 using namespace voltdb;
 
 bool SeqScanExecutor::p_init(AbstractPlanNode* abstract_node,
@@ -106,6 +111,7 @@ bool SeqScanExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool SeqScanExecutor::p_execute(const NValueArray &params) {
+    cout << "SeqScan" << endl;
     SeqScanPlanNode* node = dynamic_cast<SeqScanPlanNode*>(m_abstractNode);
     assert(node);
     Table* output_table = node->getOutputTable();

@@ -54,6 +54,11 @@
 #include "storage/tableiterator.h"
 #include "storage/tableutil.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 namespace voltdb {
 
 bool ReceiveExecutor::p_init(AbstractPlanNode* abstract_node,
@@ -69,6 +74,7 @@ bool ReceiveExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool ReceiveExecutor::p_execute(const NValueArray &params) {
+    cout << "Receive" << endl;
     int loadedDeps = 0;
     ReceivePlanNode* node = dynamic_cast<ReceivePlanNode*>(m_abstractNode);
     Table* output_table = dynamic_cast<Table*>(node->getOutputTable());

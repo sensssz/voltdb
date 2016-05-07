@@ -53,6 +53,11 @@
 #include "storage/tableiterator.h"
 #include "storage/tablefactory.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 using namespace voltdb;
 
 bool
@@ -86,6 +91,7 @@ LimitExecutor::p_init(AbstractPlanNode* abstract_node,
 bool
 LimitExecutor::p_execute(const NValueArray &params)
 {
+    cout << "Limit" << endl;
     LimitPlanNode* node = dynamic_cast<LimitPlanNode*>(m_abstractNode);
     assert(node);
     Table* output_table = node->getOutputTable();

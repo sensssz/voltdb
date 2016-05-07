@@ -31,6 +31,11 @@
 #include "storage/tablefactory.h"
 #include "storage/tableiterator.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 using namespace voltdb;
 
 bool MaterializedScanExecutor::p_init(AbstractPlanNode* abstract_node,
@@ -47,6 +52,7 @@ bool MaterializedScanExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool MaterializedScanExecutor::p_execute(const NValueArray &params) {
+    cout << "MaterializedScan" << endl;
     MaterializedScanPlanNode* node = dynamic_cast<MaterializedScanPlanNode*>(m_abstractNode);
     assert(node);
 

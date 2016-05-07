@@ -53,6 +53,11 @@
 #include "expressions/abstractexpression.h"
 #include "expressions/tuplevalueexpression.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 namespace voltdb {
 
 // This class is basically just a tagged union with some accessors provided.

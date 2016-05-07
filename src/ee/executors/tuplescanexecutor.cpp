@@ -51,6 +51,11 @@
 #include "storage/table.h"
 #include "storage/temptable.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 using namespace voltdb;
 
 bool TupleScanExecutor::p_init(AbstractPlanNode* abstract_node,
@@ -65,6 +70,7 @@ bool TupleScanExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool TupleScanExecutor::p_execute(const NValueArray &params) {
+    cout << "TupleScan" << endl;
     TupleScanPlanNode* node = static_cast<TupleScanPlanNode*>(m_abstractNode);
     assert(node == dynamic_cast<TupleScanPlanNode*>(m_abstractNode));
     Table* output_table = node->getOutputTable();

@@ -69,6 +69,11 @@
 
 #include "indexes/tableindex.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 using namespace std;
 using namespace voltdb;
 
@@ -151,6 +156,7 @@ bool NestLoopIndexExecutor::p_init(AbstractPlanNode* abstractNode,
 
 bool NestLoopIndexExecutor::p_execute(const NValueArray &params)
 {
+    cout << "NestLoopIndex" << endl;
     NestLoopIndexPlanNode* node = dynamic_cast<NestLoopIndexPlanNode*>(m_abstractNode);
     assert(node);
 

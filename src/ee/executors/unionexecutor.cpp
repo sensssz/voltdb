@@ -54,6 +54,11 @@
 #include "boost/unordered_set.hpp"
 #include "boost/unordered_map.hpp"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 namespace voltdb {
 
 namespace detail {
@@ -374,6 +379,7 @@ bool UnionExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool UnionExecutor::p_execute(const NValueArray &params) {
+    cout << "Union" << endl;
     return m_setOperator->processTuples();
 }
 

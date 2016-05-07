@@ -55,6 +55,11 @@
 #include "storage/tablefactory.h"
 #include "storage/temptable.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 namespace voltdb {
 
 bool ProjectionExecutor::p_init(AbstractPlanNode *abstractNode,
@@ -106,6 +111,7 @@ bool ProjectionExecutor::p_execute(const NValueArray &params) {
 #ifndef NDEBUG
     ProjectionPlanNode* node = dynamic_cast<ProjectionPlanNode*>(m_abstractNode);
 #endif
+    cout << "Projection" << endl;
     assert (node);
     assert (!node->isInline()); // inline projection's execute() should not be
                                 // called

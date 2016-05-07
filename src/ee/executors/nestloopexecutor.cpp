@@ -61,6 +61,11 @@
 #include "plannodes/limitnode.h"
 #include "plannodes/aggregatenode.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 #ifdef VOLT_DEBUG_ENABLED
 #include <ctime>
 #include <sys/times.h>
@@ -98,6 +103,7 @@ bool NestLoopExecutor::p_init(AbstractPlanNode* abstract_node,
 
 
 bool NestLoopExecutor::p_execute(const NValueArray &params) {
+    cout << "NestLoop" << endl;
     VOLT_DEBUG("executing NestLoop...");
 
     NestLoopPlanNode* node = dynamic_cast<NestLoopPlanNode*>(m_abstractNode);

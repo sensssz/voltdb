@@ -66,6 +66,11 @@
 #include "storage/temptable.h"
 #include "storage/persistenttable.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 using namespace voltdb;
 
 bool IndexScanExecutor::p_init(AbstractPlanNode *abstractNode,
@@ -144,6 +149,7 @@ bool IndexScanExecutor::p_init(AbstractPlanNode *abstractNode,
 
 bool IndexScanExecutor::p_execute(const NValueArray &params)
 {
+    cout << "IndexScan" << endl;
     assert(m_node);
     assert(m_node == dynamic_cast<IndexScanPlanNode*>(m_abstractNode));
 
