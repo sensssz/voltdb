@@ -168,6 +168,11 @@ bool InsertExecutor::p_execute(const NValueArray &params) {
     // Target table can be StreamedTable or PersistentTable and must not be NULL
     // Update target table reference from table delegate
     Table* targetTable = m_node->getTargetTable();
+    if (dynamic_cast<StreamedTable *>(targetTable)) {
+        cout << "Table is StreamedTable" << endl;
+    } else {
+        cout << "Table is PersistentTable" << endl;
+    }
     assert(targetTable);
     assert((targetTable == dynamic_cast<PersistentTable*>(targetTable)) ||
             (targetTable == dynamic_cast<StreamedTable*>(targetTable)));
