@@ -111,7 +111,7 @@ bool SeqScanExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool SeqScanExecutor::p_execute(const NValueArray &params) {
-    cout << "SeqScan" << endl;
+//    cout << "SeqScan" << endl;
     SeqScanPlanNode* node = dynamic_cast<SeqScanPlanNode*>(m_abstractNode);
     assert(node);
     Table* output_table = node->getOutputTable();

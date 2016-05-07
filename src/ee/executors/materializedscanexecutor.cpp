@@ -52,7 +52,7 @@ bool MaterializedScanExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool MaterializedScanExecutor::p_execute(const NValueArray &params) {
-    cout << "MaterializedScan" << endl;
+//    cout << "MaterializedScan" << endl;
     MaterializedScanPlanNode* node = dynamic_cast<MaterializedScanPlanNode*>(m_abstractNode);
     assert(node);
 

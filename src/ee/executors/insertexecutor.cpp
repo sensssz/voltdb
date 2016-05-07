@@ -159,7 +159,7 @@ bool InsertExecutor::executePurgeFragmentIfNeeded(PersistentTable** ptrToTable) 
 }
 
 bool InsertExecutor::p_execute(const NValueArray &params) {
-    cout << "Insert" << endl;
+//    cout << "Insert" << endl;
     assert(m_node == dynamic_cast<InsertPlanNode*>(m_abstractNode));
     assert(m_node);
     assert(m_inputTable == dynamic_cast<TempTable*>(m_node->getInputTable()));

@@ -148,7 +148,7 @@ bool IndexCountExecutor::p_init(AbstractPlanNode *abstractNode,
 bool IndexCountExecutor::p_execute(const NValueArray &params)
 {
     // update local target table with its most recent reference
-    cout << "IndexCountExecutor" << endl;
+    //cout << "IndexCountExecutor" << endl;
     Table* targetTable = m_node->getTargetTable();
     TableIndex * tableIndex = targetTable->index(m_node->getTargetIndexName());
     IndexCursor indexCursor(tableIndex->getTupleSchema());

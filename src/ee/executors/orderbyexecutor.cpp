@@ -114,7 +114,7 @@ OrderByExecutor::p_init(AbstractPlanNode* abstract_node,
 bool
 OrderByExecutor::p_execute(const NValueArray &params)
 {
-    cout << "OrderBy" << endl;
+//    cout << "OrderBy" << endl;
     OrderByPlanNode* node = dynamic_cast<OrderByPlanNode*>(m_abstractNode);
     assert(node);
     TempTable* output_table = dynamic_cast<TempTable*>(node->getOutputTable());

@@ -111,7 +111,7 @@ bool ProjectionExecutor::p_execute(const NValueArray &params) {
 #ifndef NDEBUG
     ProjectionPlanNode* node = dynamic_cast<ProjectionPlanNode*>(m_abstractNode);
 #endif
-    cout << "Projection" << endl;
+//    cout << "Projection" << endl;
     assert (node);
     assert (!node->isInline()); // inline projection's execute() should not be
                                 // called

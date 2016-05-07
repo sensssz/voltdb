@@ -231,7 +231,7 @@ bool MergeReceiveExecutor::p_init(AbstractPlanNode* abstract_node,
 }
 
 bool MergeReceiveExecutor::p_execute(const NValueArray &params) {
-    cout << "MergeReceive" << endl;
+//    cout << "MergeReceive" << endl;
     int loadedDeps = 0;
 
     // iterate over dependencies and merge them into the temp table.

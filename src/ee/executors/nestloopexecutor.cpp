@@ -103,7 +103,7 @@ bool NestLoopExecutor::p_init(AbstractPlanNode* abstract_node,
 
 
 bool NestLoopExecutor::p_execute(const NValueArray &params) {
-    cout << "NestLoop" << endl;
+//    cout << "NestLoop" << endl;
     VOLT_DEBUG("executing NestLoop...");
 
     NestLoopPlanNode* node = dynamic_cast<NestLoopPlanNode*>(m_abstractNode);

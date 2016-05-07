@@ -94,7 +94,7 @@ bool DeleteExecutor::p_init(AbstractPlanNode *abstract_node,
 bool DeleteExecutor::p_execute(const NValueArray &params) {
     // target table should be persistenttable
     // update target table reference from table delegate
-    cout << "DeleteExecutor" << endl;
+    //cout << "DeleteExecutor" << endl;
     PersistentTable* targetTable = dynamic_cast<PersistentTable*>(m_node->getTargetTable());
     assert(targetTable);
     TableTuple targetTuple(targetTable->schema());

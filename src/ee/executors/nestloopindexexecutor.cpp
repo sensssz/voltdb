@@ -156,7 +156,7 @@ bool NestLoopIndexExecutor::p_init(AbstractPlanNode* abstractNode,
 
 bool NestLoopIndexExecutor::p_execute(const NValueArray &params)
 {
-    cout << "NestLoopIndex" << endl;
+//    cout << "NestLoopIndex" << endl;
     NestLoopIndexPlanNode* node = dynamic_cast<NestLoopIndexPlanNode*>(m_abstractNode);
     assert(node);
 
