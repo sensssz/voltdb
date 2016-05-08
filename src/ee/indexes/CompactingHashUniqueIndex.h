@@ -73,6 +73,7 @@ class CompactingHashUniqueIndex : public TableIndex
     }
 
     void addEntryDo(const TableTuple *tuple, TableTuple *conflictTuple) {
+        std::cout << "CompactingHashUniqueIndex" << std::endl;
         ++m_inserts;
         const void* const* conflictEntry = m_entries.insert(setKeyFromTuple(tuple), tuple->address());
         if (conflictEntry != NULL && conflictTuple != NULL) {

@@ -170,6 +170,10 @@ void TableIndex::addEntry(const TableTuple *tuple, TableTuple *conflictTuple)
         // Tuple fails the predicate. Do not add it.
         return;
     }
+    /* See IntsUniqueIndex, IntsMultimapIndex, GenericUniqueIndex,
+            * GenericMultimapIndex and ArrayUniqueIndex.*/
+
+    if (dynamic_cast<IntsUniqueIndex *>(this))
     addEntryDo(tuple, conflictTuple);
 }
 

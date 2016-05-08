@@ -74,6 +74,7 @@ class CompactingHashMultiMapIndex : public TableIndex
 
     void addEntryDo(const TableTuple *tuple, TableTuple *conflictTuple)
     {
+        std::cout << "CompactingHashMultiMapIndex" << std::endl;
         ++m_inserts;
         m_entries.insert(setKeyFromTuple(tuple), tuple->address());
     }

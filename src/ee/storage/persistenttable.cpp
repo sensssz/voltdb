@@ -543,9 +543,9 @@ void PersistentTable::insertTupleCommon(TableTuple &source, TableTuple &target, 
         UndoQuantum *uq = ExecutorContext::currentUndoQuantum();
         if (uq) {
             char* tupleData = uq->allocatePooledCopy(target.address(), target.tupleLength());
-            //* enable for debug */ std::cout << "DEBUG: inserting " << (void*)target.address()
-            //* enable for debug */           << " { " << target.debugNoHeader() << " } "
-            //* enable for debug */           << " copied to " << (void*)tupleData << std::endl;
+            // enable for debug std::cout << "DEBUG: inserting " << (void*)target.address()
+            // enable for debug           << " { " << target.debugNoHeader() << " } "
+            // enable for debug           << " copied to " << (void*)tupleData << std::endl;
             uq->registerUndoAction(new (*uq) PersistentTableUndoInsertAction(tupleData, &m_surgeon, drMark));
         }
     }
@@ -941,9 +941,9 @@ void PersistentTable::deleteTupleForSchemaChange(TableTuple &target) {
 void PersistentTable::deleteTupleForUndo(char* tupleData, bool skipLookup) {
     TableTuple matchable(tupleData, m_schema);
     TableTuple target(tupleData, m_schema);
-    //* enable for debug */ std::cout << "DEBUG: undoing "
-    //* enable for debug */           << " { " << target.debugNoHeader() << " } "
-    //* enable for debug */           << " copied to " << (void*)tupleData << std::endl;
+    // enable for debug std::cout << "DEBUG: undoing "
+    // enable for debug           << " { " << target.debugNoHeader() << " } "
+    // enable for debug           << " copied to " << (void*)tupleData << std::endl;
     if (!skipLookup) {
         // The UndoInsertAction got a pooled copy of the tupleData.
         // Relocate the original tuple actually in the table.
@@ -954,9 +954,9 @@ void PersistentTable::deleteTupleForUndo(char* tupleData, bool skipLookup) {
                             " tuple does not exist\n%s\n", m_name.c_str(),
                             matchable.debugNoHeader().c_str());
     }
-    //* enable for debug */ std::cout << "DEBUG: finding " << (void*)target.address()
-    //* enable for debug */           << " { " << target.debugNoHeader() << " } "
-    //* enable for debug */           << " copied to " << (void*)tupleData << std::endl;
+    // enable for debug std::cout << "DEBUG: finding " << (void*)target.address()
+    // enable for debug           << " { " << target.debugNoHeader() << " } "
+    // enable for debug           << " copied to " << (void*)tupleData << std::endl;
 
     // Make sure that they are not trying to delete the same tuple twice
     assert(target.isActive());
