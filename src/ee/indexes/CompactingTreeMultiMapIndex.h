@@ -80,10 +80,8 @@ class CompactingTreeMultiMapIndex : public TableIndex
 
     void addEntryDo(const TableTuple *tuple, TableTuple *conflictTuple)
     {
-        TRACE_FUNCTION_START();
         ++m_inserts;
         m_entries.insert(setKeyFromTuple(tuple), tuple->address());
-        TRACE_FUNCTION_END();
     }
 
     bool deleteEntryDo(const TableTuple *tuple)
