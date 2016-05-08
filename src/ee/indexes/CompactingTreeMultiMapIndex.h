@@ -79,7 +79,6 @@ class CompactingTreeMultiMapIndex : public TableIndex
 
     void addEntryDo(const TableTuple *tuple, TableTuple *conflictTuple)
     {
-        std::cout << "CompactingTreeMultiIndex" << std::endl;
         ++m_inserts;
         m_entries.insert(setKeyFromTuple(tuple), tuple->address());
     }
