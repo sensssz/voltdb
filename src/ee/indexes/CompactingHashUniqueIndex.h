@@ -74,13 +74,11 @@ class CompactingHashUniqueIndex : public TableIndex
     }
 
     void addEntryDo(const TableTuple *tuple, TableTuple *conflictTuple) {
-        TRACE_FUNCTION_START();
         ++m_inserts;
         const void* const* conflictEntry = m_entries.insert(setKeyFromTuple(tuple), tuple->address());
         if (conflictEntry != NULL && conflictTuple != NULL) {
             conflictTuple->move(const_cast<void*>(*conflictEntry));
         }
-        TRACE_FUNCTION_END();
     }
 
     bool deleteEntryDo(const TableTuple *tuple) {
