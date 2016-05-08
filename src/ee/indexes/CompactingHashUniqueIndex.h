@@ -74,7 +74,7 @@ class CompactingHashUniqueIndex : public TableIndex
     }
 
     void addEntryDo(const TableTuple *tuple, TableTuple *conflictTuple) {
-        TRACE_FUNCTION_END();
+        TRACE_FUNCTION_START();
         ++m_inserts;
         TRACE_START();
         const void* const* conflictEntry = m_entries.insert(setKeyFromTuple(tuple), tuple->address());
