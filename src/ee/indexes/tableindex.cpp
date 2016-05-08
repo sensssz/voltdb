@@ -173,7 +173,6 @@ void TableIndex::addEntry(const TableTuple *tuple, TableTuple *conflictTuple)
     /* See IntsUniqueIndex, IntsMultimapIndex, GenericUniqueIndex,
             * GenericMultimapIndex and ArrayUniqueIndex.*/
 
-    if (dynamic_cast<IntsUniqueIndex *>(this))
     addEntryDo(tuple, conflictTuple);
 }
 
